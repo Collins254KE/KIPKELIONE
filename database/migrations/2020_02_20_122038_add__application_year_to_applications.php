@@ -14,7 +14,9 @@ class AddApplicationYearToApplications extends Migration
     public function up()
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->string('application_year')->after('bursary_type');
+            if (!Schema::hasColumn('applications', 'application_year')) {
+                $table->string('application_year')->after('bursary_type');
+            }
         });
     }
 
@@ -26,7 +28,9 @@ class AddApplicationYearToApplications extends Migration
     public function down()
     {
         Schema::table('applications', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('applications', 'application_year')) {
+                $table->dropColumn('application_year');
+            }
         });
     }
 }
