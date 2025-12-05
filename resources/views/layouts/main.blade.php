@@ -94,9 +94,7 @@
                                     <a class="txtWhite nav-link btn btn-outline-dark text-light button px-4"
                                        href="{{ route('login') }}">{{ __('Login') }}</a>
                                 </li>
-                                 <li class="nav-item">
-                                <a class="txtWhite nav-link" href="/Admin">Admin</a>
-                            </li>
+                                
                             @else
                                 <li class="nav-item dropdown">
                                     <a id="navbarDropdown" class="txtWhite nav-link dropdown-toggle " href="#"
