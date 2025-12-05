@@ -16,9 +16,12 @@ class User extends Authenticatable
         'firstName',
         'middleName',
         'lastName',
+        'id_number',   // matches your controller
+
         'email',
         'password',
         'is_admin',  // <-- add this
+        'role',
     ];
 
     protected $hidden = [

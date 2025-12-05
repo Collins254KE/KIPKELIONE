@@ -67,6 +67,8 @@ class RegisterController extends Controller
             'phone'     => $data['phone'],
             'place'     => $data['place'],
             'password'  => Hash::make($data['password']),
+            'role'      => 'student',     // default role
+            'is_admin'  => false,         // default admin status
         ]);
     }
 }
