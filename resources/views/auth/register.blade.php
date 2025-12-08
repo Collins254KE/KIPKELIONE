@@ -239,16 +239,13 @@
     const registerBtn = document.getElementById('registerBtn');
     const form = document.querySelector("form");
 
-    form.addEventListener("submit", function(e) {
+    form.addEventListener("submit", function() {
         // Disable button and change text
         registerBtn.disabled = true;
         registerBtn.innerHTML = "Registering...";
 
-        // After a short delay, redirect to login (simulate server processing)
-        setTimeout(() => {
-            // Redirect to login page
-            window.location.href = "{{ route('login') }}";
-        }, 1500); // 1.5 seconds delay
+        // Do NOT prevent default submission
+        // Laravel will handle the form submission
     });
 </script>
 

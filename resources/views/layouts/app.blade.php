@@ -57,10 +57,22 @@
                                         {{ Auth::user()->name }} {{ Auth::user()->last_name }}
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <a href="/status" class="dropdown-item">Application Status</a>
+                                        @if(!Auth::user()->is_admin)
+                                            <a href="/status" class="dropdown-item">Application Status</a>
+                                            <a href="{{ route('profile.edit') }}" class="dropdown-item">Profile</a>
+                                            <a href="{{ route('password.change') }}" class="dropdown-item">Change Password</a>
+                                            <a href="{{ route('scholarship.list') }}" class="dropdown-item">My Applications</a>
+                                            <a href="{{ route('notifications') }}" class="dropdown-item">Notifications</a>
+                                            <a href="{{ route('print.index') }}" class="dropdown-item">Print Application</a>
+                                            <a href="{{ route('help') }}" class="dropdown-item">Help / Support</a>
+                                        @endif
 
                                         @if(Auth::user()->is_admin)
-                                            <a href="{{ route('admin.cdf.index') }}" class="dropdown-item">Admin Dashboard</a>
+                                            <a href="{{ route('admin.profile') }}" class="dropdown-item">Admin Profile</a>
+                                            <a href="{{ route('admin.password.change') }}" class="dropdown-item">Change Password</a>
+                                            <a href="{{ route('admin.users.index') }}" class="dropdown-item">Manage Users</a>
+                                            <a href="{{ route('admin.settings') }}" class="dropdown-item">System Settings</a>
+                                            <a href="{{ route('admin.dashboard') }}" class="dropdown-item">Admin Dashboard</a>
                                         @endif
 
                                         <a class="dropdown-item" href="{{ route('logout') }}"
@@ -80,12 +92,9 @@
         </div>
     </header>
 
-    <!-- Carousel Section -->
     @yield('carousel')
-
 </div>
 
-<!-- Main Content -->
 <div id="app">
     <main class="py-5">
         @yield('content')
@@ -98,8 +107,6 @@
 </script>
 @endauth
 
-<!-- Footer -->
 @include('layouts.footer')
-
 </body>
 </html>

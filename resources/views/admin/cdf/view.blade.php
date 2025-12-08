@@ -43,12 +43,16 @@
                     <th>Serial Number</th>
                     <td>{{ $application->serial_number }}</td>
                 </tr>
+                <tr>
+                    <th>Award Amount</th>
+                    <td>{{ $application->award_amount ? 'KSh ' . number_format($application->award_amount) : '-' }}</td>
+                </tr>
             </table>
         </div>
     </div>
 
     <div class="card">
-        <div class="card-header">Update Application Status</div>
+        <div class="card-header">Update Application Status & Award Amount</div>
         <div class="card-body">
             <form action="{{ route('admin.cdf.update', $application->id) }}" method="POST">
                 @csrf
@@ -60,7 +64,19 @@
                         <option value="rejected" @if($application->status=='rejected') selected @endif>Rejected</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-success">Update Status</button>
+
+                <div class="mb-3">
+                    <label for="award_amount" class="form-label">Award Amount</label>
+                    <select name="award_amount" id="award_amount" class="form-control" required>
+                        @foreach([5000,10000,15000,20000,25000,30000] as $amount)
+                            <option value="{{ $amount }}" @if($application->award_amount == $amount) selected @endif>
+                                KSh {{ number_format($amount) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success">Update</button>
                 <a href="{{ route('admin.cdf.index') }}" class="btn btn-secondary">Back to List</a>
             </form>
         </div>

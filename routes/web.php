@@ -44,7 +44,7 @@ Auth::routes();
 
 /*
 |--------------------------------------------------------------------------
-| User Protected Routes (Authenticated)
+| User Protected Routes
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
@@ -70,7 +70,6 @@ Route::middleware('auth')->group(function () {
 */
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
-    // Admin Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     // CDF Applications
@@ -78,7 +77,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/cdf/{id}', [CdfAdminController::class, 'view'])->name('admin.cdf.view');
     Route::post('/cdf/{id}/update', [CdfAdminController::class, 'update'])->name('admin.cdf.update');
 
-    // University/College Applications
+    // University Applications
     Route::get('/university', [UniversityAdminController::class, 'index'])->name('admin.university.index');
     Route::get('/university/{id}', [UniversityAdminController::class, 'view'])->name('admin.university.view');
     Route::post('/university/{id}/update', [UniversityAdminController::class, 'update'])->name('admin.university.update');
@@ -86,8 +85,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Catch-All Route (Must be last)
+| Safe Catch-All Route (must NOT capture /admin routes)
 |--------------------------------------------------------------------------
 */
-Route::get('{path}', [HomeController::class, 'index'])
-    ->where('path', '([A-z\d\-\/_.]+)?');
+//Route::get('/{any}', [HomeController::class, 'index'])
+   // ->where('any', '^(?!admin|scholarship|cdf|status|print).*$');

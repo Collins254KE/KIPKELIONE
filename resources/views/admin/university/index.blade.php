@@ -13,6 +13,7 @@
                     <th>Name</th>
                     <th>Serial</th>
                     <th>Status</th>
+                    <th>Award Amount</th> <!-- NEW COLUMN -->
                     <th>Submitted</th>
                     <th>Action</th>
                 </tr>
@@ -30,6 +31,9 @@
                             @else
                                 <span class="badge badge-warning">{{ ucfirst($app->status) }}</span>
                             @endif
+                        </td>
+                        <td>
+                            {{ $app->award_amount ? 'KSh ' . number_format($app->award_amount) : '-' }}
                         </td>
                         <td>{{ $app->created_at?->format('d M Y H:i') ?? 'N/A' }}</td>
                         <td>

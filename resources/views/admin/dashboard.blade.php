@@ -4,8 +4,8 @@
 <div class="container">
     <h3 class="mb-4">Admin Dashboard</h3>
 
-    {{-- CDF Applications --}}
-    <h5 class="mt-4 mb-2">Latest CDF Applications</h5>
+    {{-- High School CDF Applications --}}
+    <h5 class="mt-4 mb-2">Latest High School CDF Applications</h5>
     @if($cdfApplications->isEmpty())
         <div class="alert alert-info">No CDF applications yet.</div>
     @else
