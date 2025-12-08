@@ -14,7 +14,6 @@
             <!-- Slide 1 -->
             <div class="carousel-item active">
                 <img src="{{ asset('images/Slider2.jpg') }}" class="d-block w-100" alt="NG-CDF Bursary">
-
                 <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
                     <h3 class="text-white"><b>NG-CDF Bursary Application Portal</b> <br>(NBAP)</h3>
                     @auth
