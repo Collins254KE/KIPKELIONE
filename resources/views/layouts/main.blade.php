@@ -118,12 +118,7 @@
 
     <!-- Hero Carousel (Single Instance Only) -->
     <div id="heroCarousel" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-            <li data-target="#heroCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#heroCarousel" data-slide-to="1"></li>
-            <li data-target="#heroCarousel" data-slide-to="2"></li>
-        </ol>
-
+        
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <img src="{{ asset('images/Slider2.jpg') }}" class="d-block w-100" alt="NG-CDF Bursary">
