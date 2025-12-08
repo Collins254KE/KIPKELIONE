@@ -94,6 +94,10 @@
                                     <a class="txtWhite nav-link btn btn-outline-dark text-light button px-4"
                                        href="{{ route('login') }}">{{ __('Login') }}</a>
                                 </li>
+                                <li class="nav-item ml-2">
+        <a class="txtWhite nav-link btn btn-outline-success text-light button px-4"
+           href="{{ route('register') }}">{{ __('Register') }}</a>
+    </li>
                                 
                             @else
                                 <li class="nav-item dropdown">
