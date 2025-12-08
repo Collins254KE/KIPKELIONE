@@ -72,9 +72,8 @@
         <div class="nav-bar">
             <div class="container">
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
-                    <a class="navbar-brand site-title text-gold" href="#">
                         <img class="middle" src="/images/mainlogo.png" alt="Main logo" width="50" height="50">
-                        <span class="middle">Kipkelion East e-Bursary</span>
+                        <span class="middle">Kipkelion East E-Bursary</span>
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
