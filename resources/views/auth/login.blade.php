@@ -10,13 +10,11 @@
     <title>Kipkelion East Constituency</title>
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.jpeg"/>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <!-- FontAwesome CSS -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
-    <!-- Styles -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
     <style>
@@ -26,6 +24,7 @@
             font-weight: 700;
         }
         i { cursor: pointer; }
+        .input-group-text { background-color: #fff; }
     </style>
 </head>
 <body>
@@ -33,17 +32,21 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
+
+                <!-- Tabs -->
                 <ul class="nav nav-tabs" id="authTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login" role="tab">Login</a>
+                        <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register" role="tab">Register</a>
+                        <a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">Register</a>
                     </li>
                 </ul>
+
+                <!-- Tab Content -->
                 <div class="tab-content p-4" id="authTabContent">
                     <!-- LOGIN -->
-                    <div class="tab-pane fade show active" id="login" role="tabpanel">
+                    <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="mb-3">
@@ -56,11 +59,11 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="pwd">Password</label>
+                                <label for="login_password">Password</label>
                                 <div class="input-group">
-                                    <input id="pwd" type="password" name="password"
+                                    <input id="login_password" type="password" name="password"
                                            class="form-control @error('password') is-invalid @enderror" required>
-                                    <span class="input-group-text"><i class="fas fa-eye-slash" id="eye"></i></span>
+                                    <span class="input-group-text"><i class="fas fa-eye-slash toggle-password" data-target="login_password"></i></span>
                                     @error('password')
                                     <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                     @enderror
@@ -81,7 +84,7 @@
                     </div>
 
                     <!-- REGISTER -->
-                    <div class="tab-pane fade" id="register" role="tabpanel">
+                    <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
                         <form method="POST" action="{{ route('register') }}">
                             @csrf
                             <div class="row mb-3">
@@ -100,6 +103,7 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div class="row mb-3">
                                 <div class="col">
                                     <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
@@ -116,6 +120,7 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div class="row mb-3">
                                 <div class="col">
                                     <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror"
@@ -132,19 +137,25 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div class="row mb-3">
                                 <div class="col">
-                                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                                           placeholder="Password" required>
-                                    @error('password')
-                                    <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                                    @enderror
+                                    <div class="input-group">
+                                        <input id="register_password" type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password" required>
+                                        <span class="input-group-text"><i class="fas fa-eye-slash toggle-password" data-target="register_password"></i></span>
+                                        @error('password')
+                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="col">
-                                    <input type="password" name="password_confirmation" class="form-control"
-                                           placeholder="Confirm Password" required>
+                                    <div class="input-group">
+                                        <input id="register_password_confirmation" type="password" name="password_confirmation" class="form-control" placeholder="Confirm Password" required>
+                                        <span class="input-group-text"><i class="fas fa-eye-slash toggle-password" data-target="register_password_confirmation"></i></span>
+                                    </div>
                                 </div>
                             </div>
+
                             <div class="mb-3 form-check">
                                 <input type="checkbox" name="terms" class="form-check-input @error('terms') is-invalid @enderror" value="1" required>
                                 <label class="form-check-label" for="terms">
@@ -154,25 +165,34 @@
                                 <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                 @enderror
                             </div>
+
                             <button type="submit" class="btn w-100">Register</button>
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
+<!-- Scripts -->
+<script src="{{ asset('js/jquery.min.js') }}"></script>
+<script src="{{ asset('js/popper.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
 <script>
-    const pwd = document.getElementById('pwd');
-    const eye = document.getElementById('eye');
-
-    if(pwd && eye){
-        eye.addEventListener('click', function(){
-            eye.classList.toggle('active');
-            pwd.type = (pwd.type === 'password') ? 'text' : 'password';
+    // Toggle password visibility for multiple fields
+    document.querySelectorAll('.toggle-password').forEach(function(icon) {
+        icon.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const input = document.getElementById(targetId);
+            if(input){
+                input.type = input.type === 'password' ? 'text' : 'password';
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            }
         });
-    }
+    });
 </script>
 </body>
 </html>
