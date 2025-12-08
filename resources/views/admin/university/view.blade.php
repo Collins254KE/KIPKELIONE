@@ -62,7 +62,7 @@
         </div>
 
         <button type="submit" class="btn btn-success">Update</button>
-        <a href="{{ route('admin.university.view') }}" class="btn btn-secondary">Back to List</a>
+        <a href="{{ route('admin.university.index') }}" class="btn btn-secondary">Back to List</a>
     </form>
 </div>
 @endsection
