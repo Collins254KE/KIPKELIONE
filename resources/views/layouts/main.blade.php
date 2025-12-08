@@ -33,18 +33,21 @@
         .middle {
             vertical-align: middle;
         }
-        /* Sticky sidebar */
-        .sticky-sidebar {
-            position: sticky;
-            top: 20px;
+        /* Top navigation bar under main navbar */
+        .top-nav {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
         }
-        /* Sidebar nav links */
-        .sidebar-nav a {
-            text-decoration: none;
-            color: #333;
+        .top-nav .nav-link {
+            color: #333 !important;
+            font-weight: 500;
         }
-        .sidebar-nav a:hover {
+        .top-nav .nav-link:hover {
             text-decoration: underline;
+        }
+        .portal-actions .btn {
+            margin-right: 10px;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -104,6 +107,40 @@
                 </nav>
             </div>
         </div>
+
+        <!-- Top Sidebar Navigation with Toggle -->
+        <div class="top-nav">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-light p-0">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#topNavContent" aria-controls="topNavContent" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span> Menu
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="topNavContent">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+                            <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+                            <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+                            <li class="nav-item"><a href="/faqs" class="nav-link">FAQ</a></li>
+                        </ul>
+                        <div class="navbar-nav portal-actions ml-auto">
+                            @guest
+                                <a class="btn btn-outline-dark" href="{{ route('login') }}">Login</a>
+                                <a class="btn btn-outline-success" href="{{ route('register') }}">Register</a>
+                            @else
+                                <a class="btn btn-outline-success" href="{{ route('apply') }}">High School</a>
+                                <a class="btn btn-outline-success" href="{{ route('scholarship.form') }}">Tertiary</a>
+                                @if(Auth::user()->is_admin)
+                                    <a class="btn btn-outline-warning" href="{{ route('admin.cdf.index') }}">Admin</a>
+                                @endif
+                            @endguest
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
     </header>
 
     <!-- Hero Carousel -->
@@ -119,20 +156,6 @@
                 <img src="{{ asset('images/Slider2.jpg') }}" class="d-block w-100" alt="NG-CDF Bursary">
                 <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
                     <h3 class="text-white"><b>NG-CDF Bursary Application Portal</b> <br>(NBAP)</h3>
-                    @guest
-                        <div class="mt-3">
-                            <a class="btn btn-outline-dark mr-2" href="{{ route('login') }}">Login</a>
-                            <a class="btn btn-outline-success" href="{{ route('register') }}">Register</a>
-                        </div>
-                    @else
-                        <div class="mt-3">
-                            <a class="btn btn-outline-success mr-2" href="{{ route('apply') }}">High School</a>
-                            <a class="btn btn-outline-success mr-2" href="{{ route('scholarship.form') }}">Tertiary</a>
-                            @if(Auth::user()->is_admin)
-                                <a class="btn btn-outline-warning" href="{{ route('admin.cdf.index') }}">Admin</a>
-                            @endif
-                        </div>
-                    @endguest
                 </div>
             </div>
             <div class="carousel-item">
@@ -160,41 +183,9 @@
     </div>
 </div>
 
-<!-- Main Content + Sticky Sidebar -->
+<!-- Main Content -->
 <div class="container mt-4">
-    <div class="row">
-        <!-- Sticky Sidebar -->
-        <div class="col-lg-4 col-md-12 mb-4">
-            <div class="card sticky-sidebar p-3">
-                <!-- Sidebar Navigation -->
-                <h5 class="mb-3"><b>Navigation</b></h5>
-                <ul class="list-group sidebar-nav mb-3">
-                    <li class="list-group-item"><a href="/">Home <span class="sr-only">(current)</span></a></li>
-                    <li class="list-group-item"><a href="/about">About</a></li>
-                    <li class="list-group-item"><a href="/contact">Contact</a></li>
-                    <li class="list-group-item"><a href="/faqs">FAQ</a></li>
-                </ul>
-
-                <!-- Portal Actions -->
-                <h5 class="mb-3"><b>Portal Actions</b></h5>
-                @guest
-                    <a class="btn btn-outline-dark btn-block mb-2" href="{{ route('login') }}">Login</a>
-                    <a class="btn btn-outline-success btn-block" href="{{ route('register') }}">Register</a>
-                @else
-                    <a class="btn btn-outline-success btn-block mb-2" href="{{ route('apply') }}">High School</a>
-                    <a class="btn btn-outline-success btn-block mb-2" href="{{ route('scholarship.form') }}">Tertiary</a>
-                    @if(Auth::user()->is_admin)
-                        <a class="btn btn-outline-warning btn-block" href="{{ route('admin.cdf.index') }}">Admin</a>
-                    @endif
-                @endguest
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="col-lg-8 col-md-12">
-            @yield('content')
-        </div>
-    </div>
+    @yield('content')
 </div>
 
 {{-- Footer --}}
