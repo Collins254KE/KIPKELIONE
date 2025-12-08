@@ -20,40 +20,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
 
     <style>
-        /* Carousel images fully responsive */
         .carousel-inner img {
             width: 100%;
             height: 100%;
         }
+        .txtWhite { color: white !important; font-size: 18px !important; }
+        .middle { vertical-align: middle; }
 
-        .txtWhite {
-            color: white !important;
-            font-size: 18px !important;
-        }
+        .top-nav { background-color: #f8f9fa; border-bottom: 1px solid #ddd; }
+        .top-nav .nav-link { color: #333 !important; font-weight: 500; }
+        .top-nav .nav-link:hover { text-decoration: underline; }
 
-        .middle {
-            vertical-align: middle;
-        }
-
-        /* Top navigation bar */
-        .top-nav {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .top-nav .nav-link {
-            color: #333 !important;
-            font-weight: 500;
-        }
-
-        .top-nav .nav-link:hover {
-            text-decoration: underline;
-        }
-
-        .portal-actions .btn {
-            margin-right: 10px;
-            margin-top: 5px;
-        }
+        .portal-actions .btn { margin-right: 10px; margin-top: 5px; }
     </style>
 </head>
 
@@ -65,7 +43,7 @@
         <div class="nav-bar">
             <div class="container">
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
-                    <a class="navbar-brand site-title text-gold" href="#" rel="home">
+                    <a class="navbar-brand site-title text-gold" href="#">
                         <img class="middle" src="/images/mainlogo.png" alt="Main logo" width="50" height="50">
                         <span class="middle">Kipkelion East e-Bursary</span>
                     </a>
@@ -78,24 +56,24 @@
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         @auth
-                            <ul class="navbar-nav ml-auto">
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="txtWhite nav-link dropdown-toggle" href="#"
-                                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        {{ Auth::user()->name }} {{ Auth::user()->last_name }}
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="txtWhite nav-link dropdown-toggle" href="#"
+                                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ Auth::user()->name }} {{ Auth::user()->last_name }}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="/status" class="dropdown-item">Application Status</a>
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        Logout
                                     </a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a href="/status" class="dropdown-item">Application Status</a>
-                                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            Logout
-                                        </a>
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
-                                            @csrf
-                                        </form>
-                                    </div>
-                                </li>
-                            </ul>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                        </ul>
                         @endauth
                     </div>
                 </nav>
@@ -113,7 +91,6 @@
                     </button>
 
                     <div class="collapse navbar-collapse" id="topNavContent">
-                        <!-- Navigation links -->
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
                             <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
@@ -121,7 +98,6 @@
                             <li class="nav-item"><a href="/faqs" class="nav-link">FAQ</a></li>
                         </ul>
 
-                        <!-- Portal actions -->
                         <div class="navbar-nav portal-actions ml-auto">
                             @guest
                                 <a class="btn btn-outline-dark" href="{{ route('login') }}">Login</a>
@@ -140,7 +116,7 @@
         </div>
     </header>
 
-    <!-- Hero Carousel -->
+    <!-- Hero Carousel (Single Instance Only) -->
     <div id="heroCarousel" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
             <li data-target="#heroCarousel" data-slide-to="0" class="active"></li>
@@ -192,6 +168,5 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-
 </body>
 </html>
