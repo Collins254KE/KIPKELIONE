@@ -38,6 +38,14 @@
             position: sticky;
             top: 20px;
         }
+        /* Sidebar nav links */
+        .sidebar-nav a {
+            text-decoration: none;
+            color: #333;
+        }
+        .sidebar-nav a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -62,27 +70,22 @@
                     </button>
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            @guest
-                                <li class="nav-item active">
-                                    <a class="txtWhite nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                        @guest
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="txtWhite nav-link btn btn-outline-dark px-4 mr-2" href="{{ route('login') }}">Login</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="txtWhite nav-link" href="/about">About</a>
+                                    <a class="txtWhite nav-link btn btn-outline-success px-4" href="{{ route('register') }}">Register</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="txtWhite nav-link" href="/contact">Contact</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="txtWhite nav-link" href="/faqs">FAQ</a>
-                                </li>
-                            @else
+                            </ul>
+                        @else
+                            <ul class="navbar-nav ml-auto">
                                 <li class="nav-item dropdown">
                                     <a id="navbarDropdown" class="txtWhite nav-link dropdown-toggle" href="#"
                                        role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         {{ Auth::user()->name }} {{ Auth::user()->last_name }}
                                     </a>
-
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                         <a href="/status" class="dropdown-item">Application Status</a>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
@@ -90,23 +93,10 @@
                                                      document.getElementById('logout-form').submit();">
                                             Logout
                                         </a>
-
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                             @csrf
                                         </form>
                                     </div>
-                                </li>
-                            @endguest
-                        </ul>
-                        @guest
-                            <ul class="navbar-nav ml-2">
-                                <li class="nav-item">
-                                    <a class="txtWhite nav-link btn btn-outline-dark text-light px-4"
-                                       href="{{ route('login') }}">Login</a>
-                                </li>
-                                <li class="nav-item ml-2">
-                                    <a class="txtWhite nav-link btn btn-outline-success text-light px-4"
-                                       href="{{ route('register') }}">Register</a>
                                 </li>
                             </ul>
                         @endguest
@@ -125,7 +115,6 @@
         </ol>
 
         <div class="carousel-inner">
-            <!-- Slide 1 -->
             <div class="carousel-item active">
                 <img src="{{ asset('images/Slider2.jpg') }}" class="d-block w-100" alt="NG-CDF Bursary">
                 <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
@@ -146,16 +135,12 @@
                     @endguest
                 </div>
             </div>
-
-            <!-- Slide 2 -->
             <div class="carousel-item">
                 <img src="{{ asset('images/Slider1.jpg') }}" class="d-block w-100" alt="Supporting Education">
                 <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
                     <h3 class="text-white">Supporting Education in Kipkelion East</h3>
                 </div>
             </div>
-
-            <!-- Slide 3 -->
             <div class="carousel-item">
                 <img src="{{ asset('images/Slider4.jpg') }}" class="d-block w-100" alt="Scholarships & Bursaries">
                 <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
@@ -164,7 +149,6 @@
             </div>
         </div>
 
-        <!-- Carousel Controls -->
         <a class="carousel-control-prev" href="#heroCarousel" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="sr-only">Previous</span>
@@ -174,29 +158,35 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-
-</div> <!-- /.hero-content -->
+</div>
 
 <!-- Main Content + Sticky Sidebar -->
 <div class="container mt-4">
     <div class="row">
         <!-- Sticky Sidebar -->
         <div class="col-lg-4 col-md-12 mb-4">
-            <div class="card sticky-sidebar text-center">
-                <div class="card-body">
-                    <h5 class="card-title mb-3"><b>Portal Actions</b></h5>
+            <div class="card sticky-sidebar p-3">
+                <!-- Sidebar Navigation -->
+                <h5 class="mb-3"><b>Navigation</b></h5>
+                <ul class="list-group sidebar-nav mb-3">
+                    <li class="list-group-item"><a href="/">Home <span class="sr-only">(current)</span></a></li>
+                    <li class="list-group-item"><a href="/about">About</a></li>
+                    <li class="list-group-item"><a href="/contact">Contact</a></li>
+                    <li class="list-group-item"><a href="/faqs">FAQ</a></li>
+                </ul>
 
-                    @guest
-                        <a class="btn btn-outline-dark btn-block mb-2" href="{{ route('login') }}">Login</a>
-                        <a class="btn btn-outline-success btn-block" href="{{ route('register') }}">Register</a>
-                    @else
-                        <a class="btn btn-outline-success btn-block mb-2" href="{{ route('apply') }}">High School</a>
-                        <a class="btn btn-outline-success btn-block mb-2" href="{{ route('scholarship.form') }}">Tertiary</a>
-                        @if(Auth::user()->is_admin)
-                            <a class="btn btn-outline-warning btn-block" href="{{ route('admin.cdf.index') }}">Admin</a>
-                        @endif
-                    @endguest
-                </div>
+                <!-- Portal Actions -->
+                <h5 class="mb-3"><b>Portal Actions</b></h5>
+                @guest
+                    <a class="btn btn-outline-dark btn-block mb-2" href="{{ route('login') }}">Login</a>
+                    <a class="btn btn-outline-success btn-block" href="{{ route('register') }}">Register</a>
+                @else
+                    <a class="btn btn-outline-success btn-block mb-2" href="{{ route('apply') }}">High School</a>
+                    <a class="btn btn-outline-success btn-block mb-2" href="{{ route('scholarship.form') }}">Tertiary</a>
+                    @if(Auth::user()->is_admin)
+                        <a class="btn btn-outline-warning btn-block" href="{{ route('admin.cdf.index') }}">Admin</a>
+                    @endif
+                @endguest
             </div>
         </div>
 
