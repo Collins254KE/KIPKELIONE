@@ -48,7 +48,8 @@
 </head>
 <body>
     <div class="header">
-        <img src="{{ public_path('images/logo.png') }}" alt="Organization Logo">
+        <img class="middle" src="/images/mainlogo.png" alt="Main logo" width="50" height="50">
+
     </div>
 
     <h2>High School CDF Applications Report</h2>

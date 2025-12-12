@@ -27,7 +27,6 @@ class UniversityAdminController extends Controller
     {
         $application = ScholarshipApplication::findOrFail($id);
 
-        // Validation rules
         $rules = [
             'status' => 'required|in:pending,approved,rejected',
         ];
@@ -40,7 +39,6 @@ class UniversityAdminController extends Controller
 
         $request->validate($rules);
 
-        // Update fields
         $application->status = $request->status;
         $application->award_amount = $request->status !== 'rejected' ? $request->award_amount : null;
         $application->rejection_reason = $request->status === 'rejected' ? $request->rejection_reason : null;
@@ -85,16 +83,25 @@ class UniversityAdminController extends Controller
 
         $callback = function () use ($applications) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Name','Serial','Gender','Institution','Father Name','Mother Name','Status','Award','Rejection Reason','Submitted']);
+
+            fputcsv($file, [
+                'Name','Serial','Admission No','Gender','PWD','Institution','Father Name','Mother Name',
+                'Ward','Location','Sub-location','Status','Award','Rejection Reason','Submitted'
+            ]);
 
             foreach ($applications as $app) {
                 fputcsv($file, [
                     $app->full_name ?? 'N/A',
                     $app->serial_number ?? 'N/A',
+                    $app->admission_no ?? 'N/A',
                     $app->gender ?? 'N/A',
+                    $app->pwd ?? '-',
                     $app->institution_name ?? 'N/A',
                     $app->father_name ?? 'N/A',
                     $app->mother_name ?? 'N/A',
+                    $app->birth_ward ?? '-',
+                    $app->birth_location ?? '-',
+                    $app->birth_sublocation ?? '-',
                     $app->status ?? 'N/A',
                     $app->award_amount ?? '-',
                     $app->rejection_reason ?? '-',
@@ -117,25 +124,33 @@ class UniversityAdminController extends Controller
         $section = $phpWord->addSection();
         $table = $section->addTable();
 
-        // Header row
+        $headers = [
+            'Name','Serial','Admission No','Gender','PWD','Institution','Father Name','Mother Name',
+            'Ward','Location','Sub-location','Status','Award','Rejection Reason','Submitted'
+        ];
+
         $table->addRow();
-        foreach (['Name','Serial','Gender','Institution','Father Name','Mother Name','Status','Award','Rejection Reason','Submitted'] as $header) {
+        foreach ($headers as $header) {
             $table->addCell(2000)->addText($header);
         }
 
-        // Data rows
         foreach ($applications as $app) {
             $table->addRow();
             $table->addCell(2000)->addText($app->full_name ?? 'N/A');
             $table->addCell(1500)->addText($app->serial_number ?? 'N/A');
+            $table->addCell(1500)->addText($app->admission_no ?? 'N/A');
             $table->addCell(1000)->addText($app->gender ?? 'N/A');
-            $table->addCell(2000)->addText($app->institution_name ?? 'N/A');
-            $table->addCell(2000)->addText($app->father_name ?? 'N/A');
-            $table->addCell(2000)->addText($app->mother_name ?? 'N/A');
-            $table->addCell(1000)->addText($app->status ?? 'N/A');
+            $table->addCell(1000)->addText($app->pwd ?? '-');
+            $table->addCell(2000)->addText($app->institution_name ?? '-');
+            $table->addCell(2000)->addText($app->father_name ?? '-');
+            $table->addCell(2000)->addText($app->mother_name ?? '-');
+            $table->addCell(1500)->addText($app->birth_ward ?? '-');
+            $table->addCell(1500)->addText($app->birth_location ?? '-');
+            $table->addCell(1500)->addText($app->birth_sublocation ?? '-');
+            $table->addCell(1000)->addText($app->status ?? '-');
             $table->addCell(1000)->addText($app->award_amount ?? '-');
             $table->addCell(2000)->addText($app->rejection_reason ?? '-');
-            $table->addCell(1500)->addText($app->created_at?->format('d M Y H:i') ?? 'N/A');
+            $table->addCell(1500)->addText($app->created_at?->format('d M Y H:i') ?? '-');
         }
 
         $tempFile = tempnam(sys_get_temp_dir(), 'UNI') . '.docx';
@@ -151,9 +166,33 @@ class UniversityAdminController extends Controller
     {
         $applications = ScholarshipApplication::all();
 
+        // Status
         $statusCounts = $applications->groupBy('status')->map->count();
-        $genderCounts = $applications->groupBy('gender')->map->count();
 
-        return view('admin.university.analysis', compact('statusCounts', 'genderCounts'));
+        // Gender normalized
+        $genderCounts = collect([
+            'Male' => $applications->whereIn('gender', ['male','Male'])->count(),
+            'Female' => $applications->whereIn('gender', ['female','Female'])->count(),
+        ]);
+
+        // PWD normalized
+        $pwdCounts = collect([
+            'Yes' => $applications->whereIn('pwd', ['yes','Yes'])->count(),
+            'No' => $applications->whereIn('pwd', ['no','No'])->count(),
+        ]);
+
+        // Ward distribution
+        $wardCounts = $applications->groupBy('birth_ward')->map->count();
+
+        // Institution distribution
+        $institutionCounts = $applications->groupBy('institution_name')->map->count();
+
+        return view('admin.university.analysis', compact(
+            'statusCounts',
+            'genderCounts',
+            'pwdCounts',
+            'wardCounts',
+            'institutionCounts'
+        ));
     }
 }

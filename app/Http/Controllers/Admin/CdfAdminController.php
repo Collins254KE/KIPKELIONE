@@ -84,7 +84,6 @@ class CdfAdminController extends Controller
         $callback = function () use ($applications) {
             $file = fopen('php://output', 'w');
 
-            // CSV Header
             fputcsv($file, [
                 'Full Name', 'Birth Cert', 'Gender', 'PWD',
                 'Admission No', 'School Name', 'School Address',
@@ -188,13 +187,42 @@ class CdfAdminController extends Controller
     // Analysis
     // -------------------------
     public function analysis()
-    {
-        $applications = CdfScholarship::all();
+{
+    $applications = CdfScholarship::all();
 
-        $statusCounts = $applications->groupBy('status')->map->count();
-        $genderCounts = $applications->groupBy('gender')->map->count();
-        $pwdCounts = $applications->groupBy('pwd')->map->count();
+    // Status
+    $statusCounts = $applications->groupBy('status')
+        ->map(fn($group) => $group->count())
+        ->filter(fn($count) => $count > 0);
 
-        return view('admin.cdf.analysis', compact('statusCounts', 'genderCounts', 'pwdCounts'));
-    }
+    // Gender normalized
+    $genderCounts = collect([
+        'Male' => $applications->whereIn('gender', ['male','Male'])->count(),
+        'Female' => $applications->whereIn('gender', ['female','Female'])->count(),
+    ])->filter(fn($count) => $count > 0);
+
+    // PWD normalized
+    $pwdCounts = collect([
+        'Yes' => $applications->whereIn('pwd', ['yes','Yes'])->count(),
+        'No' => $applications->whereIn('pwd', ['no','No'])->count(),
+    ])->filter(fn($count) => $count > 0);
+
+    // Ward distribution, ignore empty/null
+    $wardCounts = $applications->filter(fn($a) => !empty($a->birth_ward))
+        ->groupBy('birth_ward')
+        ->map(fn($group) => $group->count());
+
+    // School distribution, ignore empty/null
+    $schoolCounts = $applications->filter(fn($a) => !empty($a->school_name))
+        ->groupBy('school_name')
+        ->map(fn($group) => $group->count());
+
+    return view('admin.cdf.analysis', compact(
+        'statusCounts',
+        'genderCounts',
+        'pwdCounts',
+        'wardCounts',
+        'schoolCounts'
+    ));
+}
 }
