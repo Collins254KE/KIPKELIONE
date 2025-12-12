@@ -36,6 +36,18 @@
                     <td>{{ $application->mother_name }}</td>
                 </tr>
                 <tr>
+                    <th>Ward</th>
+                    <td>{{ $application->birth_ward ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Location</th>
+                    <td>{{ $application->birth_location ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Sub-location</th>
+                    <td>{{ $application->birth_sublocation ?? '-' }}</td>
+                </tr>
+                <tr>
                     <th>Status</th>
                     <td>{{ ucfirst($application->status) }}</td>
                 </tr>

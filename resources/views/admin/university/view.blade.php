@@ -29,6 +29,21 @@
             <th>Mother Name</th>
             <td>{{ $application->mother_name ?? 'N/A' }}</td>
         </tr>
+
+        {{-- Place of Birth --}}
+        <tr>
+            <th>Ward</th>
+            <td>{{ $application->birth_ward ?? 'N/A' }}</td>
+        </tr>
+        <tr>
+            <th>Location</th>
+            <td>{{ $application->birth_location ?? 'N/A' }}</td>
+        </tr>
+        <tr>
+            <th>Sub-Location</th>
+            <td>{{ $application->birth_sublocation ?? 'N/A' }}</td>
+        </tr>
+
         <tr>
             <th>Status</th>
             <td>{{ ucfirst($application->status) }}</td>
@@ -46,8 +61,27 @@
         @endif
     </table>
 
+    {{-- Update Form --}}
     <form action="{{ route('admin.university.update', $application->id) }}" method="POST">
         @csrf
+
+        {{-- Place of Birth Update --}}
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="birth_ward">Ward</label>
+                <input type="text" name="birth_ward" class="form-control" value="{{ $application->birth_ward ?? '' }}">
+            </div>
+            <div class="col-md-4">
+                <label for="birth_location">Location</label>
+                <input type="text" name="birth_location" class="form-control" value="{{ $application->birth_location ?? '' }}">
+            </div>
+            <div class="col-md-4">
+                <label for="birth_sublocation">Sub-Location</label>
+                <input type="text" name="birth_sublocation" class="form-control" value="{{ $application->birth_sublocation ?? '' }}">
+            </div>
+        </div>
+
+        {{-- Status Update --}}
         <div class="mb-3">
             <label for="status">Update Status</label>
             <select name="status" id="status" class="form-control" required>
@@ -57,6 +91,7 @@
             </select>
         </div>
 
+        {{-- Award Amount --}}
         <div class="mb-3" id="awardDiv" style="{{ $application->status === 'approved' ? '' : 'display:none;' }}">
             <label for="award_amount">Award Amount</label>
             <select name="award_amount" class="form-control">
@@ -68,6 +103,7 @@
             </select>
         </div>
 
+        {{-- Rejection Reason --}}
         <div class="mb-3" id="reasonDiv" style="{{ $application->status === 'rejected' ? '' : 'display:none;' }}">
             <label for="rejection_reason">Rejection Reason</label>
             <textarea name="rejection_reason" class="form-control" rows="3">{{ $application->rejection_reason }}</textarea>
@@ -93,7 +129,7 @@
         } else if(status === 'rejected') {
             awardDiv.style.display = 'none';
             reasonDiv.style.display = 'block';
-        } else { // pending
+        } else {
             awardDiv.style.display = 'none';
             reasonDiv.style.display = 'none';
         }

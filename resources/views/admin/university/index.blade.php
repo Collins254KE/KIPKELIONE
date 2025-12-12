@@ -13,7 +13,10 @@
                     <th>Name</th>
                     <th>Serial</th>
                     <th>Status</th>
-                    <th>Award Amount</th> <!-- NEW COLUMN -->
+                    <th>Award Amount</th>
+                    <th>Ward</th>
+                    <th>Location</th>
+                    <th>Sub-Location</th>
                     <th>Submitted</th>
                     <th>Action</th>
                 </tr>
@@ -25,16 +28,17 @@
                         <td>{{ $app->serial_number ?? 'N/A' }}</td>
                         <td>
                             @if($app->status == 'approved')
-                                <span class="badge badge-success">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-success">{{ ucfirst($app->status) }}</span>
                             @elseif($app->status == 'rejected')
-                                <span class="badge badge-danger">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-danger">{{ ucfirst($app->status) }}</span>
                             @else
-                                <span class="badge badge-warning">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-warning text-dark">{{ ucfirst($app->status) }}</span>
                             @endif
                         </td>
-                        <td>
-                            {{ $app->award_amount ? 'KSh ' . number_format($app->award_amount) : '-' }}
-                        </td>
+                        <td>{{ $app->award_amount ? 'KSh ' . number_format($app->award_amount) : '-' }}</td>
+                        <td>{{ $app->birth_ward ?? 'N/A' }}</td>
+                        <td>{{ $app->birth_location ?? 'N/A' }}</td>
+                        <td>{{ $app->birth_sublocation ?? 'N/A' }}</td>
                         <td>{{ $app->created_at?->format('d M Y H:i') ?? 'N/A' }}</td>
                         <td>
                             <a href="{{ route('admin.university.view', $app->id) }}" class="btn btn-sm btn-primary">View</a>

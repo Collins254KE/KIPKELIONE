@@ -34,12 +34,12 @@ class CdfAdminController extends Controller
         $application = CdfScholarship::findOrFail($id);
         $application->status = $request->status;
 
-        if($request->status === 'rejected') {
-            $application->award_amount = null; // hide award
-            $application->rejection_reason = $request->rejection_reason; // save reason
+        if ($request->status === 'rejected') {
+            $application->award_amount = null;
+            $application->rejection_reason = $request->rejection_reason;
         } else {
             $application->award_amount = $request->award_amount;
-            $application->rejection_reason = null; // clear previous reason
+            $application->rejection_reason = null;
         }
 
         $application->save();
@@ -83,19 +83,42 @@ class CdfAdminController extends Controller
 
         $callback = function () use ($applications) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Name','Serial','Gender','Father Name','Mother Name','Status','Award','Rejection Reason','Submitted']);
+
+            // CSV Header
+            fputcsv($file, [
+                'Full Name', 'Birth Cert', 'Gender', 'PWD',
+                'Admission No', 'School Name', 'School Address',
+                'Father Name', 'Father ID', 'Father Phone',
+                'Mother Name', 'Mother ID', 'Mother Phone',
+                'Ward', 'Location', 'Sub-location', 'Village',
+                'Head Teacher', 'Status', 'Serial', 'Award', 'Rejection Reason', 'Submitted'
+            ]);
 
             foreach ($applications as $app) {
                 fputcsv($file, [
                     $app->full_name ?? 'N/A',
-                    $app->serial_number ?? 'N/A',
+                    $app->birth_cert ?? 'N/A',
                     $app->gender ?? 'N/A',
+                    $app->pwd ?? '-',
+                    $app->admission_no ?? 'N/A',
+                    $app->school_name ?? 'N/A',
+                    $app->address ?? '-',
                     $app->father_name ?? 'N/A',
+                    $app->father_id ?? '-',
+                    $app->father_phone ?? '-',
                     $app->mother_name ?? 'N/A',
-                    $app->status ?? 'N/A',
-                    $app->award_amount ?? 'N/A',
+                    $app->mother_id ?? '-',
+                    $app->mother_phone ?? '-',
+                    $app->birth_ward ?? '-',
+                    $app->birth_location ?? '-',
+                    $app->birth_sublocation ?? '-',
+                    $app->birth_village ?? '-',
+                    $app->principal_name ?? '-',
+                    $app->status ?? '-',
+                    $app->serial_number ?? '-',
+                    $app->award_amount ?? '-',
                     $app->rejection_reason ?? '-',
-                    $app->created_at?->format('d M Y H:i') ?? 'N/A',
+                    $app->created_at?->format('d M Y H:i') ?? '-',
                 ]);
             }
 
@@ -114,24 +137,45 @@ class CdfAdminController extends Controller
         $section = $phpWord->addSection();
         $table = $section->addTable();
 
-        // Header row
+        $headers = [
+            'Full Name', 'Birth Cert', 'Gender', 'PWD',
+            'Admission No', 'School Name', 'School Address',
+            'Father Name', 'Father ID', 'Father Phone',
+            'Mother Name', 'Mother ID', 'Mother Phone',
+            'Ward', 'Location', 'Sub-location', 'Village',
+            'Head Teacher', 'Status', 'Serial', 'Award', 'Rejection Reason', 'Submitted'
+        ];
+
         $table->addRow();
-        foreach (['Name','Serial','Gender','Father Name','Mother Name','Status','Award','Rejection Reason','Submitted'] as $header) {
+        foreach ($headers as $header) {
             $table->addCell(2000)->addText($header);
         }
 
-        // Data rows
         foreach ($applications as $app) {
             $table->addRow();
             $table->addCell(2000)->addText($app->full_name ?? 'N/A');
-            $table->addCell(1500)->addText($app->serial_number ?? 'N/A');
+            $table->addCell(1500)->addText($app->birth_cert ?? 'N/A');
             $table->addCell(1000)->addText($app->gender ?? 'N/A');
-            $table->addCell(2000)->addText($app->father_name ?? 'N/A');
-            $table->addCell(2000)->addText($app->mother_name ?? 'N/A');
-            $table->addCell(1000)->addText($app->status ?? 'N/A');
-            $table->addCell(1000)->addText($app->award_amount ?? 'N/A');
+            $table->addCell(1000)->addText($app->pwd ?? '-');
+            $table->addCell(1500)->addText($app->admission_no ?? '-');
+            $table->addCell(2000)->addText($app->school_name ?? '-');
+            $table->addCell(2000)->addText($app->address ?? '-');
+            $table->addCell(2000)->addText($app->father_name ?? '-');
+            $table->addCell(1500)->addText($app->father_id ?? '-');
+            $table->addCell(1500)->addText($app->father_phone ?? '-');
+            $table->addCell(2000)->addText($app->mother_name ?? '-');
+            $table->addCell(1500)->addText($app->mother_id ?? '-');
+            $table->addCell(1500)->addText($app->mother_phone ?? '-');
+            $table->addCell(1500)->addText($app->birth_ward ?? '-');
+            $table->addCell(1500)->addText($app->birth_location ?? '-');
+            $table->addCell(1500)->addText($app->birth_sublocation ?? '-');
+            $table->addCell(1500)->addText($app->birth_village ?? '-');
+            $table->addCell(2000)->addText($app->principal_name ?? '-');
+            $table->addCell(1000)->addText($app->status ?? '-');
+            $table->addCell(1000)->addText($app->serial_number ?? '-');
+            $table->addCell(1000)->addText($app->award_amount ?? '-');
             $table->addCell(2000)->addText($app->rejection_reason ?? '-');
-            $table->addCell(1500)->addText($app->created_at?->format('d M Y H:i') ?? 'N/A');
+            $table->addCell(1500)->addText($app->created_at?->format('d M Y H:i') ?? '-');
         }
 
         $tempFile = tempnam(sys_get_temp_dir(), 'CDF') . '.docx';
@@ -141,7 +185,7 @@ class CdfAdminController extends Controller
     }
 
     // -------------------------
-    // Analysis Method
+    // Analysis
     // -------------------------
     public function analysis()
     {
@@ -149,7 +193,8 @@ class CdfAdminController extends Controller
 
         $statusCounts = $applications->groupBy('status')->map->count();
         $genderCounts = $applications->groupBy('gender')->map->count();
+        $pwdCounts = $applications->groupBy('pwd')->map->count();
 
-        return view('admin.cdf.analysis', compact('statusCounts', 'genderCounts'));
+        return view('admin.cdf.analysis', compact('statusCounts', 'genderCounts', 'pwdCounts'));
     }
 }
