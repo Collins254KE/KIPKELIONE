@@ -1,11 +1,13 @@
 # Use official PHP image with Apache
 FROM php:8.2-apache
 
-# Install system dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     zip unzip git curl libonig-dev libzip-dev libxml2-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring zip xml \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_pgsql mbstring zip xml gd bcmath \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Enable Apache mod_rewrite
@@ -21,16 +23,14 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install Composer
+# Copy Composer from official image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Ensure Composer is executable
 RUN chmod +x /usr/bin/composer
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction --no-progress
+# Install PHP dependencies (allow more memory for large packages)
+RUN php -d memory_limit=-1 /usr/bin/composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction --no-progress
 
-# Set permissions for Laravel
+# Set permissions for Laravel storage and cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
