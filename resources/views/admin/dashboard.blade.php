@@ -5,7 +5,25 @@
     <h3 class="mb-4">Admin Dashboard</h3>
 
     {{-- High School CDF Applications --}}
-    <h5 class="mt-4 mb-2">Latest High School CDF Applications</h5>
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+        <h5>Latest High School CDF Applications</h5>
+        <div class="btn-group">
+            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                Generate Report
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ route('admin.cdf.generate-report', ['format' => 'csv']) }}">CSV</a></li>
+                <li><a class="dropdown-item" href="{{ route('admin.cdf.generate-report', ['format' => 'pdf']) }}">PDF</a></li>
+                <li><a class="dropdown-item" href="{{ route('admin.cdf.generate-report', ['format' => 'word']) }}">Word</a></li>
+            </ul>
+        </div>
+        <div class="btn-group ms-2">
+            <a href="{{ route('admin.cdf.analysis') }}" class="btn btn-info btn-sm">
+                View Analysis
+            </a>
+        </div>
+    </div>
+
     @if($cdfApplications->isEmpty())
         <div class="alert alert-info">No CDF applications yet.</div>
     @else
@@ -32,11 +50,11 @@
                         <td>{{ $app->mother_name ?? 'N/A' }}</td>
                         <td>
                             @if($app->status == 'approved')
-                                <span class="badge badge-success">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-success">{{ ucfirst($app->status) }}</span>
                             @elseif($app->status == 'rejected')
-                                <span class="badge badge-danger">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-danger">{{ ucfirst($app->status) }}</span>
                             @else
-                                <span class="badge badge-warning">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-warning text-dark">{{ ucfirst($app->status) }}</span>
                             @endif
                         </td>
                         <td>{{ $app->created_at?->format('d M Y H:i') ?? 'N/A' }}</td>
@@ -50,7 +68,25 @@
     @endif
 
     {{-- University/College Applications --}}
-    <h5 class="mt-4 mb-2">Latest University/College Applications</h5>
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+        <h5>Latest University/College Applications</h5>
+        <div class="btn-group">
+            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                Generate Report
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ route('admin.university.generate-report', ['format' => 'csv']) }}">CSV</a></li>
+                <li><a class="dropdown-item" href="{{ route('admin.university.generate-report', ['format' => 'pdf']) }}">PDF</a></li>
+                <li><a class="dropdown-item" href="{{ route('admin.university.generate-report', ['format' => 'word']) }}">Word</a></li>
+            </ul>
+        </div>
+        <div class="btn-group ms-2">
+            <a href="{{ route('admin.university.analysis') }}" class="btn btn-info btn-sm">
+                View Analysis
+            </a>
+        </div>
+    </div>
+
     @if($universityApplications->isEmpty())
         <div class="alert alert-info">No University/College applications yet.</div>
     @else
@@ -79,11 +115,11 @@
                         <td>{{ $app->mother_name ?? 'N/A' }}</td>
                         <td>
                             @if($app->status == 'approved')
-                                <span class="badge badge-success">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-success">{{ ucfirst($app->status) }}</span>
                             @elseif($app->status == 'rejected')
-                                <span class="badge badge-danger">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-danger">{{ ucfirst($app->status) }}</span>
                             @else
-                                <span class="badge badge-warning">{{ ucfirst($app->status) }}</span>
+                                <span class="badge bg-warning text-dark">{{ ucfirst($app->status) }}</span>
                             @endif
                         </td>
                         <td>{{ $app->created_at?->format('d M Y H:i') ?? 'N/A' }}</td>

@@ -5,38 +5,155 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ScholarshipApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
+use PhpOffice\PhpWord\PhpWord;
 
 class UniversityAdminController extends Controller
 {
-    // Show all university applications
     public function index()
     {
-        $universityApplications = ScholarshipApplication::latest()->get();
+        $universityApplications = ScholarshipApplication::latest()->paginate(20);
         return view('admin.university.index', compact('universityApplications'));
     }
 
-    // View single application
     public function view($id)
     {
         $application = ScholarshipApplication::findOrFail($id);
         return view('admin.university.view', compact('application'));
     }
 
-    // Update application status and award amount
     public function update(Request $request, $id)
     {
         $application = ScholarshipApplication::findOrFail($id);
 
-        // Validate status and award_amount
-        $request->validate([
+        // Validation rules
+        $rules = [
             'status' => 'required|in:pending,approved,rejected',
-            'award_amount' => 'required|in:5000,10000,15000,20000,25000,30000',
-        ]);
+        ];
 
+        if ($request->status === 'rejected') {
+            $rules['rejection_reason'] = 'required|string|max:500';
+        } else {
+            $rules['award_amount'] = 'required|in:5000,10000,15000,20000,25000,30000';
+        }
+
+        $request->validate($rules);
+
+        // Update fields
         $application->status = $request->status;
-        $application->award_amount = $request->award_amount;
+        $application->award_amount = $request->status !== 'rejected' ? $request->award_amount : null;
+        $application->rejection_reason = $request->status === 'rejected' ? $request->rejection_reason : null;
+
         $application->save();
 
         return redirect()->back()->with('success', 'Application updated successfully.');
+    }
+
+    // -------------------------
+    // Report Generation
+    // -------------------------
+    public function generateReport($format = 'pdf')
+    {
+        $applications = ScholarshipApplication::latest()->get();
+
+        switch (strtolower($format)) {
+            case 'csv':
+                return $this->generateCSV($applications, 'university_applications.csv');
+
+            case 'pdf':
+                $pdf = Pdf::loadView('admin.reports.university_pdf', compact('applications'));
+                return $pdf->download('university_applications.pdf');
+
+            case 'word':
+                return $this->generateWord($applications, 'university_applications.docx');
+
+            default:
+                abort(400, 'Invalid report format');
+        }
+    }
+
+    // -------------------------
+    // CSV Helper
+    // -------------------------
+    protected function generateCSV($applications, $filename)
+    {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () use ($applications) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Name','Serial','Gender','Institution','Father Name','Mother Name','Status','Award','Rejection Reason','Submitted']);
+
+            foreach ($applications as $app) {
+                fputcsv($file, [
+                    $app->full_name ?? 'N/A',
+                    $app->serial_number ?? 'N/A',
+                    $app->gender ?? 'N/A',
+                    $app->institution_name ?? 'N/A',
+                    $app->father_name ?? 'N/A',
+                    $app->mother_name ?? 'N/A',
+                    $app->status ?? 'N/A',
+                    $app->award_amount ?? '-',
+                    $app->rejection_reason ?? '-',
+                    $app->created_at?->format('d M Y H:i') ?? 'N/A',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
+
+    // -------------------------
+    // Word Helper
+    // -------------------------
+    protected function generateWord($applications, $filename)
+    {
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        $table = $section->addTable();
+
+        // Header row
+        $table->addRow();
+        foreach (['Name','Serial','Gender','Institution','Father Name','Mother Name','Status','Award','Rejection Reason','Submitted'] as $header) {
+            $table->addCell(2000)->addText($header);
+        }
+
+        // Data rows
+        foreach ($applications as $app) {
+            $table->addRow();
+            $table->addCell(2000)->addText($app->full_name ?? 'N/A');
+            $table->addCell(1500)->addText($app->serial_number ?? 'N/A');
+            $table->addCell(1000)->addText($app->gender ?? 'N/A');
+            $table->addCell(2000)->addText($app->institution_name ?? 'N/A');
+            $table->addCell(2000)->addText($app->father_name ?? 'N/A');
+            $table->addCell(2000)->addText($app->mother_name ?? 'N/A');
+            $table->addCell(1000)->addText($app->status ?? 'N/A');
+            $table->addCell(1000)->addText($app->award_amount ?? '-');
+            $table->addCell(2000)->addText($app->rejection_reason ?? '-');
+            $table->addCell(1500)->addText($app->created_at?->format('d M Y H:i') ?? 'N/A');
+        }
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'UNI') . '.docx';
+        $phpWord->save($tempFile, 'Word2007');
+
+        return response()->download($tempFile, $filename)->deleteFileAfterSend(true);
+    }
+
+    // -------------------------
+    // Analysis Method
+    // -------------------------
+    public function analysis()
+    {
+        $applications = ScholarshipApplication::all();
+
+        $statusCounts = $applications->groupBy('status')->map->count();
+        $genderCounts = $applications->groupBy('gender')->map->count();
+
+        return view('admin.university.analysis', compact('statusCounts', 'genderCounts'));
     }
 }

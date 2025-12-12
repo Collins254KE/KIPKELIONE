@@ -23,17 +23,20 @@
     19 => 'Illuminate\\Translation\\TranslationServiceProvider',
     20 => 'Illuminate\\Validation\\ValidationServiceProvider',
     21 => 'Illuminate\\View\\ViewServiceProvider',
-    22 => 'Intervention\\Image\\ImageServiceProvider',
-    23 => 'Laravel\\Passport\\PassportServiceProvider',
-    24 => 'Laravel\\Tinker\\TinkerServiceProvider',
-    25 => 'Laravel\\Ui\\UiServiceProvider',
-    26 => 'Carbon\\Laravel\\ServiceProvider',
-    27 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    28 => 'Propaganistas\\LaravelPhone\\PhoneServiceProvider',
-    29 => 'App\\Providers\\AppServiceProvider',
-    30 => 'App\\Providers\\AuthServiceProvider',
-    31 => 'App\\Providers\\EventServiceProvider',
-    32 => 'App\\Providers\\RouteServiceProvider',
+    22 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    23 => 'Intervention\\Image\\ImageServiceProvider',
+    24 => 'Laravel\\Breeze\\BreezeServiceProvider',
+    25 => 'Laravel\\Passport\\PassportServiceProvider',
+    26 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    27 => 'Laravel\\Ui\\UiServiceProvider',
+    28 => 'Carbon\\Laravel\\ServiceProvider',
+    29 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    30 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    31 => 'Propaganistas\\LaravelPhone\\PhoneServiceProvider',
+    32 => 'App\\Providers\\AppServiceProvider',
+    33 => 'App\\Providers\\AuthServiceProvider',
+    34 => 'App\\Providers\\EventServiceProvider',
+    35 => 'App\\Providers\\RouteServiceProvider',
   ),
   'eager' => 
   array (
@@ -47,16 +50,18 @@
     7 => 'Illuminate\\Pagination\\PaginationServiceProvider',
     8 => 'Illuminate\\Session\\SessionServiceProvider',
     9 => 'Illuminate\\View\\ViewServiceProvider',
-    10 => 'Intervention\\Image\\ImageServiceProvider',
-    11 => 'Laravel\\Passport\\PassportServiceProvider',
-    12 => 'Laravel\\Ui\\UiServiceProvider',
-    13 => 'Carbon\\Laravel\\ServiceProvider',
-    14 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    15 => 'Propaganistas\\LaravelPhone\\PhoneServiceProvider',
-    16 => 'App\\Providers\\AppServiceProvider',
-    17 => 'App\\Providers\\AuthServiceProvider',
-    18 => 'App\\Providers\\EventServiceProvider',
-    19 => 'App\\Providers\\RouteServiceProvider',
+    10 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    11 => 'Intervention\\Image\\ImageServiceProvider',
+    12 => 'Laravel\\Passport\\PassportServiceProvider',
+    13 => 'Laravel\\Ui\\UiServiceProvider',
+    14 => 'Carbon\\Laravel\\ServiceProvider',
+    15 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    16 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    17 => 'Propaganistas\\LaravelPhone\\PhoneServiceProvider',
+    18 => 'App\\Providers\\AppServiceProvider',
+    19 => 'App\\Providers\\AuthServiceProvider',
+    20 => 'App\\Providers\\EventServiceProvider',
+    21 => 'App\\Providers\\RouteServiceProvider',
   ),
   'deferred' => 
   array (
@@ -199,6 +204,7 @@
     'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
+    'Laravel\\Breeze\\Console\\InstallCommand' => 'Laravel\\Breeze\\BreezeServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
   ),
   'when' => 
@@ -237,6 +243,9 @@
     array (
     ),
     'Illuminate\\Validation\\ValidationServiceProvider' => 
+    array (
+    ),
+    'Laravel\\Breeze\\BreezeServiceProvider' => 
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 
