@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-<<<<<<< HEAD
-=======
 use Illuminate\Support\Facades\Auth;
->>>>>>> 16ca537 (update files)
 
 class LoginController extends Controller
 {
@@ -28,8 +25,6 @@ class LoginController extends Controller
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Override the username method to use a custom login field
      */
     public function username()
@@ -55,7 +50,6 @@ class LoginController extends Controller
     }
 
     /**
->>>>>>> 16ca537 (update files)
      * Redirect users after login based on role.
      */
     protected function authenticated(Request $request, $user)
@@ -65,10 +59,6 @@ class LoginController extends Controller
         }
 
         // Regular user
-<<<<<<< HEAD
-        return redirect()->route('status'); // or your user dashboard
-=======
         return redirect()->route('home'); // or your user dashboard
->>>>>>> 16ca537 (update files)
     }
 }
