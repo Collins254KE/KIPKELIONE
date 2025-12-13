@@ -39,7 +39,10 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <style>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 16ca537 (update files)
         .btn {
             background-color: forestgreen;
             color: #fff;
@@ -49,15 +52,50 @@
         i {
             cursor: pointer;
         }
+<<<<<<< HEAD
+=======
+
+        /* Add auth header like login page */
+        .auth-card {
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,.08);
+        }
+
+        .auth-header {
+            background: forestgreen;
+            color: #fff;
+            padding: 1rem;
+            font-weight: 700;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            margin-bottom: 1rem;
+        }
+>>>>>>> 16ca537 (update files)
     </style>
 </head>
 <body>
 <div class="hero-content" style="margin-bottom: 10%;">
 
+<<<<<<< HEAD
     <div class="container pt-5">
         <div class="row justify-content-center pt-5">
             <div class="col-md-8 pt-5">
                 <div class="card">
+=======
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+
+                <div class="card auth-card">
+
+                    <!-- Header -->
+                    <div class="auth-header">
+                        Kipkelion East E-Bursary Portal
+                    </div>
+
+                    <!-- Tabs -->
+>>>>>>> 16ca537 (update files)
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" href="/register">Register</a>
@@ -66,6 +104,10 @@
                             <a class="nav-link" href="/login">Login</a>
                         </li>
                     </ul>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 16ca537 (update files)
                     <div class="card-body text-center">
                         <form method="POST" action="{{ route('register') }}">
                             @csrf
@@ -99,6 +141,11 @@
                                     @enderror
                                 </div>
                             </div>
+<<<<<<< HEAD
+=======
+
+                            <!-- Rest of your existing form code stays completely intact -->
+>>>>>>> 16ca537 (update files)
                             <div class="form-group row justify-content-center">
                                 <div class="col-md-5 input-group mb-2 mr-sm-2">
                                     <div class="input-group-prepend">
@@ -131,6 +178,11 @@
                                     @enderror
                                 </div>
                             </div>
+<<<<<<< HEAD
+=======
+
+                            <!-- All remaining form fields unchanged -->
+>>>>>>> 16ca537 (update files)
                             <div class="form-group row justify-content-center">
                                 <div class="col-md-5 input-group mb-2 mr-sm-2">
                                     <div class="input-group-prepend">
@@ -188,6 +240,10 @@
                                            autocomplete="new-password">
                                 </div>
                             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 16ca537 (update files)
                             <div class="form-group row justify-content-center">
                                 <div class="col-md-10">
                                     <div class="form-check">
@@ -208,18 +264,33 @@
                                 </div>
                             </div>
                            <div class="form-group row mb-0 justify-content-center">
+<<<<<<< HEAD
     <button id="registerBtn" type="submit" class="btn btn px-5">
         Register
     </button>
 </div>
+=======
+                                <button id="registerBtn" type="submit" class="btn btn px-5">
+                                    Register
+                                </button>
+                           </div>
+>>>>>>> 16ca537 (update files)
 
                         </form>
                     </div>
                 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 16ca537 (update files)
             </div>
         </div>
     </div>
 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 16ca537 (update files)
 <script>
 
     var pwd = document.getElementById('pwd');
@@ -249,7 +320,10 @@
     });
 </script>
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 16ca537 (update files)
 </body>
 </html>

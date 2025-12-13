@@ -28,6 +28,7 @@
                 </div>
             </div>
 
+<<<<<<< HEAD
             <!-- Slide 2 -->
             <div class="carousel-item">
                 <img src="{{ asset('images/Slider1.jpg') }}" class="d-block w-100" alt="Supporting Education">
@@ -45,6 +46,9 @@
             </div>
 
         </div>
+=======
+            
+>>>>>>> 16ca537 (update files)
 
         <!-- Carousel Controls -->
         <a class="carousel-control-prev" href="#heroCarousel" role="button" data-slide="prev">

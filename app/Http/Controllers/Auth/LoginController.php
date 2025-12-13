@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
+=======
+use Illuminate\Support\Facades\Auth;
+>>>>>>> 16ca537 (update files)
 
 class LoginController extends Controller
 {
@@ -24,6 +28,34 @@ class LoginController extends Controller
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Override the username method to use a custom login field
+     */
+    public function username()
+    {
+        return 'login'; // matches the input name in your login form
+    }
+
+    /**
+     * Attempt to login using email or phone
+     */
+    protected function attemptLogin(Request $request)
+    {
+        $login = $request->input($this->username());
+        $password = $request->input('password');
+
+        // Check if login is numeric (phone) or email
+        $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        return Auth::attempt([
+            $fieldType => $login,
+            'password' => $password,
+        ], $request->filled('remember'));
+    }
+
+    /**
+>>>>>>> 16ca537 (update files)
      * Redirect users after login based on role.
      */
     protected function authenticated(Request $request, $user)
@@ -33,6 +65,10 @@ class LoginController extends Controller
         }
 
         // Regular user
+<<<<<<< HEAD
         return redirect()->route('status'); // or your user dashboard
+=======
+        return redirect()->route('home'); // or your user dashboard
+>>>>>>> 16ca537 (update files)
     }
 }

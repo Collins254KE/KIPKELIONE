@@ -67,6 +67,7 @@
             </div>
         </div>
 
+<<<<<<< HEAD
         {{-- SCHOOL / COURSE DETAILS --}}
         <h5 class="text-info mt-4 mb-3">SCHOOL / INSTITUTION DETAILS</h5>
         <div class="row mb-3">
@@ -82,6 +83,99 @@
                 <label>School Address *</label>
                 <input type="text" name="address" class="form-control" required>
             </div>
+=======
+        {{-- SCHOOL / INSTITUTION DETAILS --}}
+<h5 class="text-info mt-4 mb-3">SCHOOL / INSTITUTION DETAILS</h5>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label for="school_name">School Name <span class="text-danger">*</span></label>
+        <input type="text"
+               id="school_name"
+               name="school_name"
+               class="form-control @error('school_name') is-invalid @enderror"
+               value="{{ old('school_name') }}"
+               required>
+
+        @error('school_name')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="col-md-3">
+        <label for="admission_no">Admission Number <span class="text-danger">*</span></label>
+        <input type="text"
+               id="admission_no"
+               name="admission_no"
+               class="form-control @error('admission_no') is-invalid @enderror"
+               value="{{ old('admission_no') }}"
+               required>
+
+        @error('admission_no')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="col-md-3">
+        <label for="address">School Address <span class="text-danger">*</span></label>
+        <input type="text"
+               id="address"
+               name="address"
+               class="form-control @error('address') is-invalid @enderror"
+               value="{{ old('address') }}"
+               required>
+
+        @error('address')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
+
+{{-- FEE STRUCTURE (Attached to School) --}}
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label for="fee_structure">
+            Upload Current Fee Structure <span class="text-danger">*</span>
+        </label>
+
+        <input type="file"
+               id="fee_structure"
+               name="fee_structure"
+               class="form-control @error('fee_structure') is-invalid @enderror"
+               accept=".pdf,.jpg,.jpeg,.png"
+               required>
+
+        @error('fee_structure')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+
+        <small class="form-text text-muted">
+            Accepted formats: PDF, JPG, PNG (Maximum 2MB)
+        </small>
+    </div>
+
+    <div class="col-md-6">
+        <label for="term_fees">
+            Total Fees Per Term (KES) <span class="text-danger">*</span>
+        </label>
+
+        <input type="number"
+               id="term_fees"
+               name="term_fees"
+               class="form-control @error('term_fees') is-invalid @enderror"
+               value="{{ old('term_fees') }}"
+               min="0"
+               step="1"
+               placeholder="e.g. 25000"
+               required>
+
+        @error('term_fees')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
+
+>>>>>>> 16ca537 (update files)
         </div>
 
         {{-- PARENTS / GUARDIAN DETAILS --}}
