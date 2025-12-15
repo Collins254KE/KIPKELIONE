@@ -8,6 +8,7 @@
         "php": "^8.1",
         "aws/aws-sdk-php": "^3.240",
         "barryvdh/laravel-dompdf": "^3.1",
+        "endroid/qr-code": "^6.0",
         "hashids/hashids": "^4.1",
         "intervention/image": "^2.7",
         "laravel/framework": "^10.0",

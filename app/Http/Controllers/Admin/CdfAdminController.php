@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpWord\PhpWord;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class CdfAdminController extends Controller
 {
@@ -60,7 +64,25 @@ class CdfAdminController extends Controller
                 return $this->generateCSV($applications, 'cdf_applications.csv');
 
             case 'pdf':
-                $pdf = Pdf::loadView('admin.reports.cdf_pdf', compact('applications'));
+                // URL to include in QR code
+                $reportUrl = route('admin.cdf.index');
+
+                // Generate QR code (v6 syntax)
+                $qr = QrCode::create($reportUrl)
+                    ->setEncoding(new Encoding('UTF-8'))
+                    ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh())
+                    ->setSize(120)
+                    ->setMargin(5);
+
+                $writer = new PngWriter();
+                $qrResult = $writer->write($qr);
+
+                // Save QR code temporarily
+                $qrTemp = tempnam(sys_get_temp_dir(), 'qr') . '.png';
+                $qrResult->saveToFile($qrTemp);
+
+                // Pass QR to PDF view
+                $pdf = Pdf::loadView('admin.reports.cdf_pdf', compact('applications', 'qrTemp'));
                 return $pdf->download('cdf_applications.pdf');
 
             case 'word':
@@ -187,42 +209,37 @@ class CdfAdminController extends Controller
     // Analysis
     // -------------------------
     public function analysis()
-{
-    $applications = CdfScholarship::all();
+    {
+        $applications = CdfScholarship::all();
 
-    // Status
-    $statusCounts = $applications->groupBy('status')
-        ->map(fn($group) => $group->count())
-        ->filter(fn($count) => $count > 0);
+        $statusCounts = $applications->groupBy('status')
+            ->map(fn($group) => $group->count())
+            ->filter(fn($count) => $count > 0);
 
-    // Gender normalized
-    $genderCounts = collect([
-        'Male' => $applications->whereIn('gender', ['male','Male'])->count(),
-        'Female' => $applications->whereIn('gender', ['female','Female'])->count(),
-    ])->filter(fn($count) => $count > 0);
+        $genderCounts = collect([
+            'Male' => $applications->whereIn('gender', ['male','Male'])->count(),
+            'Female' => $applications->whereIn('gender', ['female','Female'])->count(),
+        ])->filter(fn($count) => $count > 0);
 
-    // PWD normalized
-    $pwdCounts = collect([
-        'Yes' => $applications->whereIn('pwd', ['yes','Yes'])->count(),
-        'No' => $applications->whereIn('pwd', ['no','No'])->count(),
-    ])->filter(fn($count) => $count > 0);
+        $pwdCounts = collect([
+            'Yes' => $applications->whereIn('pwd', ['yes','Yes'])->count(),
+            'No' => $applications->whereIn('pwd', ['no','No'])->count(),
+        ])->filter(fn($count) => $count > 0);
 
-    // Ward distribution, ignore empty/null
-    $wardCounts = $applications->filter(fn($a) => !empty($a->birth_ward))
-        ->groupBy('birth_ward')
-        ->map(fn($group) => $group->count());
+        $wardCounts = $applications->filter(fn($a) => !empty($a->birth_ward))
+            ->groupBy('birth_ward')
+            ->map(fn($group) => $group->count());
 
-    // School distribution, ignore empty/null
-    $schoolCounts = $applications->filter(fn($a) => !empty($a->school_name))
-        ->groupBy('school_name')
-        ->map(fn($group) => $group->count());
+        $schoolCounts = $applications->filter(fn($a) => !empty($a->school_name))
+            ->groupBy('school_name')
+            ->map(fn($group) => $group->count());
 
-    return view('admin.cdf.analysis', compact(
-        'statusCounts',
-        'genderCounts',
-        'pwdCounts',
-        'wardCounts',
-        'schoolCounts'
-    ));
-}
+        return view('admin.cdf.analysis', compact(
+            'statusCounts',
+            'genderCounts',
+            'pwdCounts',
+            'wardCounts',
+            'schoolCounts'
+        ));
+    }
 }
