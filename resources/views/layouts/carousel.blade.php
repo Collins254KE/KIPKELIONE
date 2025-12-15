@@ -28,27 +28,8 @@
                 </div>
             </div>
 
-<<<<<<< HEAD
-            <!-- Slide 2 -->
-            <div class="carousel-item">
-                <img src="{{ asset('images/Slider1.jpg') }}" class="d-block w-100" alt="Supporting Education">
-                <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
-                    <h3 class="text-white">Supporting Education in Kipkelion East</h3>
-                </div>
-            </div>
-
-            <!-- Slide 3 -->
-            <div class="carousel-item">
-                <img src="{{ asset('images/Slider4.jpg') }}" class="d-block w-100" alt="Scholarships & Bursaries">
-                <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
-                    <h3 class="text-white">Apply Today for Scholarships & Bursaries</h3>
-                </div>
-            </div>
-
-        </div>
-=======
+        
             
->>>>>>> 16ca537 (update files)
 
         <!-- Carousel Controls -->
         <a class="carousel-control-prev" href="#heroCarousel" role="button" data-slide="prev">
