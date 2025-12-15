@@ -48,22 +48,35 @@
 </head>
 <body>
     <div class="header">
-        <img class="middle" src="/images/mainlogo.png" alt="Main logo" width="50" height="50">
+        <img src="{{ public_path('img/logo.png') }}" alt="Main logo" width="50" height="50">
+
 
     </div>
 
     <h2>High School CDF Applications Report</h2>
+@php
+    $total = $applications->count();
 
-    @php
-        $total = $applications->count();
-        $maleCount = $applications->where('gender', 'male')->count();
-        $femaleCount = $applications->where('gender', 'female')->count();
-        $malePercent = $total ? round(($maleCount / $total) * 100, 1) : 0;
-        $femalePercent = $total ? round(($femaleCount / $total) * 100, 1) : 0;
+    $maleCount = $applications->filter(function ($app) {
+        return in_array(
+            strtolower(trim($app->gender ?? '')),
+            ['male', 'm']
+        );
+    })->count();
 
-        $wardCounts = $applications->groupBy('birth_ward')->map->count();
-        $schoolCounts = $applications->groupBy('school_name')->map->count();
-    @endphp
+    $femaleCount = $applications->filter(function ($app) {
+        return in_array(
+            strtolower(trim($app->gender ?? '')),
+            ['female', 'f']
+        );
+    })->count();
+
+    $malePercent = $total ? round(($maleCount / $total) * 100, 1) : 0;
+    $femalePercent = $total ? round(($femaleCount / $total) * 100, 1) : 0;
+
+    $wardCounts = $applications->groupBy('birth_ward')->map->count();
+    $schoolCounts = $applications->groupBy('school_name')->map->count();
+@endphp
 
     <h3>Summary</h3>
     <table class="summary-table">

@@ -48,7 +48,9 @@
 </head>
 <body>
     <div class="header">
-        <img src="{{ public_path('images/logo.png') }}" alt="Organization Logo">
+        <img src="{{ public_path('img/logo.png') }}" alt="Main logo" width="50" height="50">
+
+
     </div>
 
     <h2>University/College Applications Report</h2>
