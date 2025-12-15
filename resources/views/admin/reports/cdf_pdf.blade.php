@@ -31,7 +31,7 @@
             width: 100px;
         }
 
-        .header .qr-container img.qr {
+        .header .qr-container img {
             width: 80px;
             height: 80px;
         }
@@ -47,18 +47,14 @@
             font-weight: bold;
             color: #2E86C1;
             margin-bottom: 20px;
-            line-height: 1.3;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        h2, h3 {
+        h3 {
             text-align: center;
+            color: #D35400;
             margin-bottom: 10px;
         }
-
-        h2 { color: #117A65; }
-        h3 { color: #D35400; }
 
         table {
             width: 100%;
@@ -77,14 +73,15 @@
 
         th {
             background-color: #f2f2f2;
+            text-align: center;
         }
 
         .summary-table {
-            width: 50%;
+            width: 60%;
             margin: 0 auto 20px auto;
         }
 
-        .summary-table th, .summary-table td {
+        .summary-table td {
             text-align: center;
         }
 
@@ -93,123 +90,148 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <img src="{{ public_path('img/logo.png') }}" class="logo" alt="Main logo">
-        @if(isset($qrTemp))
-            <div class="qr-container">
-                <img src="{{ $qrDataUri }}" alt="QR Code">
 
-                <div>Scan to view report</div>
-            </div>
-        @endif
-    </div>
+<div class="header">
+    <img src="{{ public_path('img/logo.png') }}" class="logo" alt="Main logo">
 
-    <h1 class="report-title">
-        Kipkelion East NG-CDF <br>High School CDF Applications Report
-    </h1>
+    @if(isset($qrTemp))
+        <div class="qr-container">
+            <img src="{{ $qrDataUri }}" alt="QR Code">
+            <div>Scan to view report</div>
+        </div>
+    @endif
+</div>
 
-    @php
-        $total = $applications->count();
+<h1 class="report-title">
+    Kipkelion East NG-CDF <br>
+    High School CDF Applications Report
+</h1>
 
-        $maleCount = $applications->filter(function ($app) {
-            return in_array(strtolower(trim($app->gender ?? '')), ['male', 'm']);
-        })->count();
+@php
+    $total = $applications->count();
 
-        $femaleCount = $applications->filter(function ($app) {
-            return in_array(strtolower(trim($app->gender ?? '')), ['female', 'f']);
-        })->count();
+    $maleCount = $applications->filter(fn($a) =>
+        in_array(strtolower(trim($a->gender ?? '')), ['male','m'])
+    )->count();
 
-        $malePercent = $total ? round(($maleCount / $total) * 100, 1) : 0;
-        $femalePercent = $total ? round(($femaleCount / $total) * 100, 1) : 0;
+    $femaleCount = $applications->filter(fn($a) =>
+        in_array(strtolower(trim($a->gender ?? '')), ['female','f'])
+    )->count();
 
-        $wardCounts = $applications->groupBy('birth_ward')->map->count();
-        $schoolCounts = $applications->groupBy('school_name')->map->count();
-    @endphp
+    $malePercent   = $total ? round(($maleCount / $total) * 100, 1) : 0;
+    $femalePercent = $total ? round(($femaleCount / $total) * 100, 1) : 0;
 
-    <h3>Summary</h3>
-    <table class="summary-table">
+    $wardCounts   = $applications->groupBy('birth_ward')->map->count();
+    $schoolCounts = $applications->groupBy('school_name')->map->count();
+
+    $totalAwards = $applications->sum('award_amount');
+
+    $wardAwards = $applications->groupBy('birth_ward')->map(fn($g) => $g->sum('award_amount'));
+    $schoolAwards = $applications->groupBy('school_name')->map(fn($g) => $g->sum('award_amount'));
+@endphp
+
+<h3>Gender Summary</h3>
+<table class="summary-table">
+    <tr>
+        <th>Gender</th>
+        <th>Applications</th>
+        <th>Percentage</th>
+    </tr>
+    <tr>
+        <td>Male</td>
+        <td>{{ $maleCount }}</td>
+        <td>{{ $malePercent }}%</td>
+    </tr>
+    <tr>
+        <td>Female</td>
+        <td>{{ $femaleCount }}</td>
+        <td>{{ $femalePercent }}%</td>
+    </tr>
+</table>
+
+<h3>Total Awards Summary</h3>
+<table class="summary-table">
+    <tr>
+        <th>Total Applications</th>
+        <th>Total Award Amount (KSh)</th>
+    </tr>
+    <tr>
+        <td>{{ $total }}</td>
+        <td><strong>{{ number_format($totalAwards, 2) }}</strong></td>
+    </tr>
+</table>
+
+<h3>Applications & Awards by Ward</h3>
+<table class="summary-table">
+    <tr>
+        <th>Ward</th>
+        <th>Applications</th>
+        <th>%</th>
+        <th>Total Award (KSh)</th>
+    </tr>
+    @foreach($wardCounts as $ward => $count)
         <tr>
+            <td>{{ $ward ?? 'N/A' }}</td>
+            <td>{{ $count }}</td>
+            <td>{{ round(($count / $total) * 100, 1) }}%</td>
+            <td>{{ number_format($wardAwards[$ward] ?? 0, 2) }}</td>
+        </tr>
+    @endforeach
+</table>
+
+<h3>Applications & Awards by School</h3>
+<table class="summary-table">
+    <tr>
+        <th>School</th>
+        <th>Applications</th>
+        <th>%</th>
+        <th>Total Award (KSh)</th>
+    </tr>
+    @foreach($schoolCounts as $school => $count)
+        <tr>
+            <td>{{ $school ?? 'N/A' }}</td>
+            <td>{{ $count }}</td>
+            <td>{{ round(($count / $total) * 100, 1) }}%</td>
+            <td>{{ number_format($schoolAwards[$school] ?? 0, 2) }}</td>
+        </tr>
+    @endforeach
+</table>
+
+<h3>Detailed Applications List</h3>
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Serial</th>
+            <th>Admission No</th>
             <th>Gender</th>
-            <th>Count</th>
-            <th>Percentage</th>
-        </tr>
-        <tr>
-            <td>Male</td>
-            <td>{{ $maleCount }}</td>
-            <td>{{ $malePercent }}%</td>
-        </tr>
-        <tr>
-            <td>Female</td>
-            <td>{{ $femaleCount }}</td>
-            <td>{{ $femalePercent }}%</td>
-        </tr>
-    </table>
-
-    <h3>Applications by Ward</h3>
-    <table class="summary-table">
-        <tr>
-            <th>Ward</th>
-            <th>Count</th>
-            <th>Percentage</th>
-        </tr>
-        @foreach($wardCounts as $ward => $count)
-            <tr>
-                <td>{{ $ward ?? 'N/A' }}</td>
-                <td>{{ $count }}</td>
-                <td>{{ $total ? round(($count / $total) * 100, 1) : 0 }}%</td>
-            </tr>
-        @endforeach
-    </table>
-
-    <h3>Applications by School</h3>
-    <table class="summary-table">
-        <tr>
             <th>School</th>
-            <th>Count</th>
-            <th>Percentage</th>
+            <th>Ward</th>
+            <th>Status</th>
+            <th>Award (KSh)</th>
+            <th>Submitted</th>
         </tr>
-        @foreach($schoolCounts as $school => $count)
+    </thead>
+    <tbody>
+        @foreach($applications as $i => $app)
             <tr>
-                <td>{{ $school ?? 'N/A' }}</td>
-                <td>{{ $count }}</td>
-                <td>{{ $total ? round(($count / $total) * 100, 1) : 0 }}%</td>
+                <td>{{ $i + 1 }}</td>
+                <td>{{ $app->full_name }}</td>
+                <td>{{ $app->serial_number }}</td>
+                <td>{{ $app->admission_no }}</td>
+                <td>{{ ucfirst($app->gender) }}</td>
+                <td>{{ $app->school_name }}</td>
+                <td>{{ $app->birth_ward }}</td>
+                <td>{{ ucfirst($app->status) }}</td>
+                <td>{{ $app->award_amount ? number_format($app->award_amount, 2) : '-' }}</td>
+                <td>{{ $app->created_at?->format('d M Y H:i') }}</td>
             </tr>
         @endforeach
-    </table>
+    </tbody>
+</table>
 
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Serial</th>
-                <th>Admission No</th>
-                <th>Gender</th>
-                <th>School</th>
-                <th>Ward</th>
-                <th>Status</th>
-                <th>Award</th>
-                <th>Submitted</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($applications as $index => $app)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $app->full_name ?? 'N/A' }}</td>
-                    <td>{{ $app->serial_number ?? 'N/A' }}</td>
-                    <td>{{ $app->admission_no ?? 'N/A' }}</td>
-                    <td>{{ ucfirst($app->gender ?? 'N/A') }}</td>
-                    <td>{{ $app->school_name ?? 'N/A' }}</td>
-                    <td>{{ $app->birth_ward ?? 'N/A' }}</td>
-                    <td>{{ ucfirst($app->status ?? 'N/A') }}</td>
-                    <td>{{ $app->award_amount ? 'KSh ' . number_format($app->award_amount) : '-' }}</td>
-                    <td>{{ $app->created_at?->format('d M Y H:i') ?? 'N/A' }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+<p><strong>Total Applications:</strong> {{ $total }}</p>
 
-    <p>Total Applications: {{ $total }}</p>
 </body>
 </html>
