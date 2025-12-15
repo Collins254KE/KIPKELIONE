@@ -49,23 +49,11 @@
 <body>
     <div class="header">
         <img src="{{ public_path('img/logo.png') }}" alt="Main logo" width="50" height="50">
-
-
     </div>
 
     <h2>University/College Applications Report</h2>
 
-    @php
-        $total = $applications->count();
-        $maleCount = $applications->where('gender', 'male')->count();
-        $femaleCount = $applications->where('gender', 'female')->count();
-        $malePercent = $total ? round(($maleCount / $total) * 100, 1) : 0;
-        $femalePercent = $total ? round(($femaleCount / $total) * 100, 1) : 0;
-
-        $wardCounts = $applications->groupBy('birth_ward')->map->count();
-        $institutionCounts = $applications->groupBy('institution_name')->map->count();
-    @endphp
-
+    {{-- Summary Table --}}
     <h3>Summary</h3>
     <table class="summary-table">
         <tr>
@@ -85,6 +73,7 @@
         </tr>
     </table>
 
+    {{-- Applications by Ward --}}
     <h3>Applications by Ward</h3>
     <table class="summary-table">
         <tr>
@@ -101,6 +90,7 @@
         @endforeach
     </table>
 
+    {{-- Applications by Institution --}}
     <h3>Applications by Institution</h3>
     <table class="summary-table">
         <tr>
@@ -117,7 +107,8 @@
         @endforeach
     </table>
 
-    {{-- Detailed Table --}}
+    {{-- Detailed Applications --}}
+    <h3>Detailed Applications</h3>
     <table>
         <thead>
             <tr>
@@ -139,22 +130,22 @@
         </thead>
         <tbody>
             @foreach($applications as $app)
-                <tr>
-                    <td>{{ $app->full_name ?? 'N/A' }}</td>
-                    <td>{{ $app->serial_number ?? 'N/A' }}</td>
-                    <td>{{ $app->admission_no ?? 'N/A' }}</td>
-                    <td>{{ ucfirst($app->gender ?? 'N/A') }}</td>
-                    <td>{{ $app->pwd ?? 'N/A' }}</td>
-                    <td>{{ $app->father_name ?? 'N/A' }}</td>
-                    <td>{{ $app->mother_name ?? 'N/A' }}</td>
-                    <td>{{ $app->institution_name ?? '-' }}</td>
-                    <td>{{ $app->birth_ward ?? 'N/A' }}</td>
-                    <td>{{ $app->birth_location ?? 'N/A' }}</td>
-                    <td>{{ $app->birth_sublocation ?? 'N/A' }}</td>
-                    <td>{{ ucfirst($app->status ?? 'N/A') }}</td>
-                    <td>{{ $app->award_amount ? 'KSh ' . number_format($app->award_amount) : '-' }}</td>
-                    <td>{{ $app->created_at?->format('d M Y H:i') ?? 'N/A' }}</td>
-                </tr>
+            <tr>
+                <td>{{ $app->full_name ?? 'N/A' }}</td>
+                <td>{{ $app->serial_number ?? 'N/A' }}</td>
+                <td>{{ $app->admission_no ?? 'N/A' }}</td>
+                <td>{{ ucfirst($app->gender ?? 'N/A') }}</td>
+                <td>{{ $app->pwd ?? 'N/A' }}</td>
+                <td>{{ $app->father_name ?? 'N/A' }}</td>
+                <td>{{ $app->mother_name ?? 'N/A' }}</td>
+                <td>{{ $app->institution_name ?? '-' }}</td>
+                <td>{{ $app->birth_ward ?? 'N/A' }}</td>
+                <td>{{ $app->birth_location ?? 'N/A' }}</td>
+                <td>{{ $app->birth_sublocation ?? 'N/A' }}</td>
+                <td>{{ ucfirst($app->status ?? 'N/A') }}</td>
+                <td>{{ $app->award_amount ? 'KSh ' . number_format($app->award_amount) : '-' }}</td>
+                <td>{{ $app->created_at?->format('d M Y H:i') ?? 'N/A' }}</td>
+            </tr>
             @endforeach
         </tbody>
     </table>

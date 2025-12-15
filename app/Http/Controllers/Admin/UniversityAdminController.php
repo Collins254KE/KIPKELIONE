@@ -27,9 +27,7 @@ class UniversityAdminController extends Controller
     {
         $application = ScholarshipApplication::findOrFail($id);
 
-        $rules = [
-            'status' => 'required|in:pending,approved,rejected',
-        ];
+        $rules = ['status' => 'required|in:pending,approved,rejected'];
 
         if ($request->status === 'rejected') {
             $rules['rejection_reason'] = 'required|string|max:500';
@@ -39,11 +37,11 @@ class UniversityAdminController extends Controller
 
         $request->validate($rules);
 
-        $application->status = $request->status;
-        $application->award_amount = $request->status !== 'rejected' ? $request->award_amount : null;
-        $application->rejection_reason = $request->status === 'rejected' ? $request->rejection_reason : null;
-
-        $application->save();
+        $application->update([
+            'status' => $request->status,
+            'award_amount' => $request->status !== 'rejected' ? $request->award_amount : null,
+            'rejection_reason' => $request->status === 'rejected' ? $request->rejection_reason : null,
+        ]);
 
         return redirect()->back()->with('success', 'Application updated successfully.');
     }
@@ -53,15 +51,26 @@ class UniversityAdminController extends Controller
     // -------------------------
     public function generateReport($format = 'pdf')
     {
-        $applications = ScholarshipApplication::latest()->get();
+        // Fetch all applications that are NOT soft-deleted
+        $applications = ScholarshipApplication::query()->get();
+
+        $total = $applications->count();
+        $maleCount = $applications->whereIn('gender', ['male','Male'])->count();
+        $femaleCount = $applications->whereIn('gender', ['female','Female'])->count();
+        $malePercent = $total ? round(($maleCount / $total) * 100, 1) : 0;
+        $femalePercent = $total ? round(($femaleCount / $total) * 100, 1) : 0;
+        $wardCounts = $applications->groupBy('birth_ward')->map->count();
+        $institutionCounts = $applications->groupBy('institution_name')->map->count();
 
         switch (strtolower($format)) {
+            case 'pdf':
+                $pdf = Pdf::loadView('admin.reports.university_pdf', compact(
+                    'applications', 'total', 'maleCount', 'femaleCount', 'malePercent', 'femalePercent', 'wardCounts', 'institutionCounts'
+                ));
+                return $pdf->download('university_applications.pdf');
+
             case 'csv':
                 return $this->generateCSV($applications, 'university_applications.csv');
-
-            case 'pdf':
-                $pdf = Pdf::loadView('admin.reports.university_pdf', compact('applications'));
-                return $pdf->download('university_applications.pdf');
 
             case 'word':
                 return $this->generateWord($applications, 'university_applications.docx');
@@ -83,7 +92,6 @@ class UniversityAdminController extends Controller
 
         $callback = function () use ($applications) {
             $file = fopen('php://output', 'w');
-
             fputcsv($file, [
                 'Name','Serial','Admission No','Gender','PWD','Institution','Father Name','Mother Name',
                 'Ward','Location','Sub-location','Status','Award','Rejection Reason','Submitted'
@@ -166,25 +174,16 @@ class UniversityAdminController extends Controller
     {
         $applications = ScholarshipApplication::all();
 
-        // Status
         $statusCounts = $applications->groupBy('status')->map->count();
-
-        // Gender normalized
         $genderCounts = collect([
             'Male' => $applications->whereIn('gender', ['male','Male'])->count(),
             'Female' => $applications->whereIn('gender', ['female','Female'])->count(),
         ]);
-
-        // PWD normalized
         $pwdCounts = collect([
             'Yes' => $applications->whereIn('pwd', ['yes','Yes'])->count(),
             'No' => $applications->whereIn('pwd', ['no','No'])->count(),
         ]);
-
-        // Ward distribution
         $wardCounts = $applications->groupBy('birth_ward')->map->count();
-
-        // Institution distribution
         $institutionCounts = $applications->groupBy('institution_name')->map->count();
 
         return view('admin.university.analysis', compact(
@@ -192,7 +191,9 @@ class UniversityAdminController extends Controller
             'genderCounts',
             'pwdCounts',
             'wardCounts',
-            'institutionCounts'
+            //'institutionCounts'
+            'schoolCounts' // pass this instead of institutionCounts
+
         ));
     }
 }
