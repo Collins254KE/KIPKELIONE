@@ -8,10 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpWord\PhpWord;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class CdfAdminController extends Controller
 {
@@ -57,53 +53,21 @@ class CdfAdminController extends Controller
     // -------------------------
     public function generateReport($format = 'pdf')
     {
+        $applications = CdfScholarship::latest()->get();
+
         switch (strtolower($format)) {
             case 'csv':
-                $applications = CdfScholarship::latest()->get();
                 return $this->generateCSV($applications, 'cdf_applications.csv');
 
             case 'pdf':
-                return $this->generatePDF();
+                $pdf = Pdf::loadView('admin.reports.cdf_pdf', compact('applications'));
+                return $pdf->download('cdf_applications.pdf');
 
             case 'word':
-                $applications = CdfScholarship::latest()->get();
                 return $this->generateWord($applications, 'cdf_applications.docx');
 
             default:
                 abort(400, 'Invalid report format');
-        }
-    }
-
-    protected function generatePDF()
-    {
-        // Use get() for moderate datasets, cursor() for very large datasets
-        $applications = CdfScholarship::latest()->get();
-
-        // Increase memory and execution time
-        ini_set('memory_limit', '512M');
-        ini_set('max_execution_time', 300);
-
-        try {
-            // Generate QR code as base64
-            $reportUrl = route('admin.cdf.index');
-            $qr = QrCode::create($reportUrl)
-                ->setEncoding(new Encoding('UTF-8'))
-                ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh())
-                ->setSize(120)
-                ->setMargin(5);
-
-            $writer = new PngWriter();
-            $qrResult = $writer->write($qr);
-            $qrDataUri = $qrResult->getDataUri(); // Safe for DomPDF
-
-            // Load PDF view
-            $pdf = Pdf::loadView('admin.reports.cdf_pdf', compact('applications', 'qrDataUri'))
-                      ->setPaper('a4', 'landscape');
-
-            return $pdf->download('cdf_applications.pdf');
-        } catch (\Exception $e) {
-            \Log::error('PDF generation error: ' . $e->getMessage());
-            abort(500, 'Unable to generate PDF. Check logs for details.');
         }
     }
 
@@ -121,9 +85,12 @@ class CdfAdminController extends Controller
             $file = fopen('php://output', 'w');
 
             fputcsv($file, [
-                'Full Name','Birth Cert','Gender','PWD','Admission No','School Name','School Address',
-                'Father Name','Father ID','Father Phone','Mother Name','Mother ID','Mother Phone',
-                'Ward','Location','Sub-location','Village','Head Teacher','Status','Serial','Award','Rejection Reason','Submitted'
+                'Full Name', 'Birth Cert', 'Gender', 'PWD',
+                'Admission No', 'School Name', 'School Address',
+                'Father Name', 'Father ID', 'Father Phone',
+                'Mother Name', 'Mother ID', 'Mother Phone',
+                'Ward', 'Location', 'Sub-location', 'Village',
+                'Head Teacher', 'Status', 'Serial', 'Award', 'Rejection Reason', 'Submitted'
             ]);
 
             foreach ($applications as $app) {
@@ -170,9 +137,12 @@ class CdfAdminController extends Controller
         $table = $section->addTable();
 
         $headers = [
-            'Full Name','Birth Cert','Gender','PWD','Admission No','School Name','School Address',
-            'Father Name','Father ID','Father Phone','Mother Name','Mother ID','Mother Phone',
-            'Ward','Location','Sub-location','Village','Head Teacher','Status','Serial','Award','Rejection Reason','Submitted'
+            'Full Name', 'Birth Cert', 'Gender', 'PWD',
+            'Admission No', 'School Name', 'School Address',
+            'Father Name', 'Father ID', 'Father Phone',
+            'Mother Name', 'Mother ID', 'Mother Phone',
+            'Ward', 'Location', 'Sub-location', 'Village',
+            'Head Teacher', 'Status', 'Serial', 'Award', 'Rejection Reason', 'Submitted'
         ];
 
         $table->addRow();
@@ -217,27 +187,42 @@ class CdfAdminController extends Controller
     // Analysis
     // -------------------------
     public function analysis()
-    {
-        $applications = CdfScholarship::all();
+{
+    $applications = CdfScholarship::all();
 
-        $statusCounts = $applications->groupBy('status')->map(fn($g) => $g->count())->filter(fn($c) => $c > 0);
+    // Status
+    $statusCounts = $applications->groupBy('status')
+        ->map(fn($group) => $group->count())
+        ->filter(fn($count) => $count > 0);
 
-        $genderCounts = collect([
-            'Male' => $applications->whereIn('gender', ['male','Male'])->count(),
-            'Female' => $applications->whereIn('gender', ['female','Female'])->count(),
-        ])->filter(fn($c) => $c > 0);
+    // Gender normalized
+    $genderCounts = collect([
+        'Male' => $applications->whereIn('gender', ['male','Male'])->count(),
+        'Female' => $applications->whereIn('gender', ['female','Female'])->count(),
+    ])->filter(fn($count) => $count > 0);
 
-        $pwdCounts = collect([
-            'Yes' => $applications->whereIn('pwd', ['yes','Yes'])->count(),
-            'No' => $applications->whereIn('pwd', ['no','No'])->count(),
-        ])->filter(fn($c) => $c > 0);
+    // PWD normalized
+    $pwdCounts = collect([
+        'Yes' => $applications->whereIn('pwd', ['yes','Yes'])->count(),
+        'No' => $applications->whereIn('pwd', ['no','No'])->count(),
+    ])->filter(fn($count) => $count > 0);
 
-        $wardCounts = $applications->filter(fn($a) => !empty($a->birth_ward))
-            ->groupBy('birth_ward')->map(fn($g) => $g->count());
+    // Ward distribution, ignore empty/null
+    $wardCounts = $applications->filter(fn($a) => !empty($a->birth_ward))
+        ->groupBy('birth_ward')
+        ->map(fn($group) => $group->count());
 
-        $schoolCounts = $applications->filter(fn($a) => !empty($a->school_name))
-            ->groupBy('school_name')->map(fn($g) => $g->count());
+    // School distribution, ignore empty/null
+    $schoolCounts = $applications->filter(fn($a) => !empty($a->school_name))
+        ->groupBy('school_name')
+        ->map(fn($group) => $group->count());
 
-        return view('admin.cdf.analysis', compact('statusCounts','genderCounts','pwdCounts','wardCounts','schoolCounts'));
-    }
+    return view('admin.cdf.analysis', compact(
+        'statusCounts',
+        'genderCounts',
+        'pwdCounts',
+        'wardCounts',
+        'schoolCounts'
+    ));
+}
 }
