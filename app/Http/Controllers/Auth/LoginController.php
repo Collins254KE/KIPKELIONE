@@ -59,6 +59,6 @@ class LoginController extends Controller
         }
 
         // Regular user
-        return redirect()->route('home'); // or your user dashboard
+        return redirect()->route('status'); // or your user dashboard
     }
 }
