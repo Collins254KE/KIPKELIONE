@@ -97,7 +97,8 @@
         <img src="{{ public_path('img/logo.png') }}" class="logo" alt="Main logo">
         @if(isset($qrTemp))
             <div class="qr-container">
-                <img src="{{ $qrTemp }}" class="qr" alt="Scan QR code for online report">
+                <img src="{{ $qrDataUri }}" alt="QR Code">
+
                 <div>Scan to view report</div>
             </div>
         @endif

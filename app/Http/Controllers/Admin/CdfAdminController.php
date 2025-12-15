@@ -67,7 +67,7 @@ class CdfAdminController extends Controller
                 // URL to include in QR code
                 $reportUrl = route('admin.cdf.index');
 
-                // Generate QR code (v6 syntax)
+                // Generate QR code
                 $qr = QrCode::create($reportUrl)
                     ->setEncoding(new Encoding('UTF-8'))
                     ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh())
@@ -77,12 +77,12 @@ class CdfAdminController extends Controller
                 $writer = new PngWriter();
                 $qrResult = $writer->write($qr);
 
-                // Save QR code temporarily
-                $qrTemp = tempnam(sys_get_temp_dir(), 'qr') . '.png';
-                $qrResult->saveToFile($qrTemp);
+                // Convert QR code to base64 (safe for DomPDF)
+                $qrDataUri = $qrResult->getDataUri();
 
-                // Pass QR to PDF view
-                $pdf = Pdf::loadView('admin.reports.cdf_pdf', compact('applications', 'qrTemp'));
+                // Pass to PDF view
+                $pdf = Pdf::loadView('admin.reports.cdf_pdf', compact('applications', 'qrDataUri'));
+
                 return $pdf->download('cdf_applications.pdf');
 
             case 'word':
