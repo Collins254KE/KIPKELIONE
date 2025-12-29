@@ -10,6 +10,7 @@
 
     <h3 class="mb-4">CDF High School Bursary Application</h3>
 
+    {{-- Flash Messages --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -25,7 +26,6 @@
     @endif
 
     <form id="applicationForm" action="{{ route('scholarship.cdf.submit') }}" method="POST" enctype="multipart/form-data">
-
         @csrf
 
         {{-- STUDENT DETAILS --}}
@@ -40,177 +40,123 @@
             </div>
             <div class="col-md-3">
                 <label>Birth Cert No *</label>
-                <input type="text" name="birth_cert" class="form-control" required>
+                <input type="text" name="birth_cert" class="form-control @error('birth_cert') is-invalid @enderror" value="{{ old('birth_cert') }}" required>
+                @error('birth_cert')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
             <div class="col-md-6">
                 <label>Full Name *</label>
-                <input type="text" name="full_name" class="form-control" required>
+                <input type="text" name="full_name" class="form-control @error('full_name') is-invalid @enderror" value="{{ old('full_name') }}" required>
+                @error('full_name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-4">
                 <label>Gender *</label>
-                <select name="gender" class="form-control" required>
+                <select name="gender" class="form-control @error('gender') is-invalid @enderror" required>
                     <option value="">--Select--</option>
-                    <option>Male</option>
-                    <option>Female</option>
+                    <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                    <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
                 </select>
+                @error('gender')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
             <div class="col-md-4">
                 <label>Person With Disability (PWD)</label>
-                <select name="pwd" class="form-control">
+                <select name="pwd" class="form-control @error('pwd') is-invalid @enderror">
                     <option value="">--Select--</option>
-                    <option>Yes</option>
-                    <option>No</option>
+                    <option value="Yes" {{ old('pwd') == 'Yes' ? 'selected' : '' }}>Yes</option>
+                    <option value="No" {{ old('pwd') == 'No' ? 'selected' : '' }}>No</option>
                 </select>
+                @error('pwd')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 
-<<<<<<< HEAD
-        {{-- SCHOOL / COURSE DETAILS --}}
+        {{-- SCHOOL / INSTITUTION DETAILS --}}
         <h5 class="text-info mt-4 mb-3">SCHOOL / INSTITUTION DETAILS</h5>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label>School Name *</label>
-                <input type="text" name="school_name" class="form-control" required>
+                <input type="text" name="school_name" class="form-control @error('school_name') is-invalid @enderror" value="{{ old('school_name') }}" required>
+                @error('school_name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
             <div class="col-md-3">
                 <label>Admission Number *</label>
-                <input type="text" name="admission_no" class="form-control" required>
+                <input type="text" name="admission_no" class="form-control @error('admission_no') is-invalid @enderror" value="{{ old('admission_no') }}" required>
+                @error('admission_no')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
             <div class="col-md-3">
                 <label>School Address *</label>
-                <input type="text" name="address" class="form-control" required>
+                <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" value="{{ old('address') }}" required>
+                @error('address')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
-=======
-        {{-- SCHOOL / INSTITUTION DETAILS --}}
-<h5 class="text-info mt-4 mb-3">SCHOOL / INSTITUTION DETAILS</h5>
-
-<div class="row mb-3">
-    <div class="col-md-6">
-        <label for="school_name">School Name <span class="text-danger">*</span></label>
-        <input type="text"
-               id="school_name"
-               name="school_name"
-               class="form-control @error('school_name') is-invalid @enderror"
-               value="{{ old('school_name') }}"
-               required>
-
-        @error('school_name')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-
-    <div class="col-md-3">
-        <label for="admission_no">Admission Number <span class="text-danger">*</span></label>
-        <input type="text"
-               id="admission_no"
-               name="admission_no"
-               class="form-control @error('admission_no') is-invalid @enderror"
-               value="{{ old('admission_no') }}"
-               required>
-
-        @error('admission_no')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-
-    <div class="col-md-3">
-        <label for="address">School Address <span class="text-danger">*</span></label>
-        <input type="text"
-               id="address"
-               name="address"
-               class="form-control @error('address') is-invalid @enderror"
-               value="{{ old('address') }}"
-               required>
-
-        @error('address')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-</div>
-
-{{-- FEE STRUCTURE (Attached to School) --}}
-<div class="row mb-3">
-    <div class="col-md-6">
-        <label for="fee_structure">
-            Upload Current Fee Structure <span class="text-danger">*</span>
-        </label>
-
-        <input type="file"
-               id="fee_structure"
-               name="fee_structure"
-               class="form-control @error('fee_structure') is-invalid @enderror"
-               accept=".pdf,.jpg,.jpeg,.png"
-               required>
-
-        @error('fee_structure')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-
-        <small class="form-text text-muted">
-            Accepted formats: PDF, JPG, PNG (Maximum 2MB)
-        </small>
-    </div>
-
-    <div class="col-md-6">
-        <label for="term_fees">
-            Total Fees Per Term (KES) <span class="text-danger">*</span>
-        </label>
-
-        <input type="number"
-               id="term_fees"
-               name="term_fees"
-               class="form-control @error('term_fees') is-invalid @enderror"
-               value="{{ old('term_fees') }}"
-               min="0"
-               step="1"
-               placeholder="e.g. 25000"
-               required>
-
-        @error('term_fees')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-</div>
-
->>>>>>> 16ca537 (update files)
         </div>
 
-        {{-- PARENTS / GUARDIAN DETAILS --}}
+        {{-- FEE STRUCTURE --}}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label>Upload Current Fee Structure *</label>
+                <input type="file" name="fee_structure" class="form-control @error('fee_structure') is-invalid @enderror" accept=".pdf,.jpg,.jpeg,.png" required>
+                @error('fee_structure')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+                <small class="form-text text-muted">Accepted formats: PDF, JPG, PNG (Max 2MB)</small>
+            </div>
+            <div class="col-md-6">
+                <label>Total Fees Per Term (KES) *</label>
+                <input type="number" name="term_fees" class="form-control @error('term_fees') is-invalid @enderror" value="{{ old('term_fees') }}" min="0" step="1" placeholder="e.g. 25000" required>
+                @error('term_fees')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
+
+        {{-- PARENT / GUARDIAN DETAILS --}}
         <h5 class="text-success mt-4 mb-3">PARENT / GUARDIAN DETAILS</h5>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label>Father/Guardian Name *</label>
-                <input type="text" name="father_name" class="form-control" required>
+                <input type="text" name="father_name" class="form-control" value="{{ old('father_name') }}" required>
             </div>
             <div class="col-md-3">
                 <label>ID Number *</label>
-                <input type="text" name="father_id" class="form-control" required>
+                <input type="text" name="father_id" class="form-control" value="{{ old('father_id') }}" required>
             </div>
             <div class="col-md-3">
                 <label>Phone *</label>
-                <input type="text" name="father_phone" class="form-control" required>
+                <input type="text" name="father_phone" class="form-control" value="{{ old('father_phone') }}" required>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label>Mother/Guardian Name *</label>
-                <input type="text" name="mother_name" class="form-control" required>
+                <input type="text" name="mother_name" class="form-control" value="{{ old('mother_name') }}" required>
             </div>
             <div class="col-md-3">
                 <label>ID Number *</label>
-                <input type="text" name="mother_id" class="form-control" required>
+                <input type="text" name="mother_id" class="form-control" value="{{ old('mother_id') }}" required>
             </div>
             <div class="col-md-3">
                 <label>Phone *</label>
-                <input type="text" name="mother_phone" class="form-control" required>
+                <input type="text" name="mother_phone" class="form-control" value="{{ old('mother_phone') }}" required>
             </div>
         </div>
 
-        {{-- HOME DETAILS --}}
+        {{-- HOME BACKGROUND --}}
         <h5 class="text-warning mt-4 mb-3">HOME BACKGROUND</h5>
         <div class="row mb-3">
             <div class="col-md-4">
@@ -239,7 +185,7 @@
 
         <div class="mb-3">
             <label>Village</label>
-            <input type="text" name="birth_village" class="form-control">
+            <input type="text" name="birth_village" class="form-control" value="{{ old('birth_village') }}">
         </div>
 
         {{-- HEAD TEACHER --}}
@@ -247,7 +193,7 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label>Name of Head Teacher *</label>
-                <input type="text" name="principal_name" class="form-control" required>
+                <input type="text" name="principal_name" class="form-control" value="{{ old('principal_name') }}" required>
             </div>
             <div class="col-md-6">
                 <label>Upload Recommendation Letter / Stamp *</label>
@@ -258,60 +204,49 @@
         <button id="submitBtn" type="submit" class="btn btn-primary mt-4">Submit Application</button>
     </form>
 
-{{-- APPLICATION HISTORY --}}
-<h3 class="mt-5 mb-3">Application History</h3>
+    {{-- APPLICATION HISTORY --}}
+    <h3 class="mt-5 mb-3">Application History</h3>
+    @php
+        $sessionId = session()->getId();
+        $userApplications = auth()->check() ? $applications : $applications->where('session_id', $sessionId);
+    @endphp
 
-@php
-    $sessionId = session()->getId();
-
-    // Show applications for authenticated users or by session
-    $userApplications = auth()->check()
-        ? $applications
-        : $applications->where('session_id', $sessionId);
-@endphp
-
-@if($userApplications->isEmpty())
-    <div class="alert alert-info">No applications yet.</div>
-@else
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Application Type</th> {{-- New Column --}}
-                <th>Serial</th>
-                <th>Status</th>
-                <th>Submitted</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($userApplications as $app)
+    @if($userApplications->isEmpty())
+        <div class="alert alert-info">No applications yet.</div>
+    @else
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <td>{{ $app->full_name }}</td>
-                    <td>
-                        @if(isset($app->school_name) && !empty($app->school_name))
-                            High School
-                        @else
-                            University/College
-                        @endif
-                    </td>
-                    <td>{{ $app->serial_number ?? 'N/A' }}</td>
-                    <td>{{ ucfirst($app->status) }}</td>
-                    <td>{{ $app->created_at->format('d M Y H:i') }}</td>
-                    <td>
-                        @if(isset($app->school_name) && !empty($app->school_name))
-                            <a href="{{ route('scholarship.cdf.view', $app->id) }}" class="btn btn-sm btn-primary">View</a>
-                        @else
-                            <a href="{{ route('scholarship.view', $app->id) }}" class="btn btn-sm btn-primary">View</a>
-                        @endif
-                    </td>
+                    <th>Name</th>
+                    <th>Application Type</th>
+                    <th>Serial</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th>Action</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-@endif
+            </thead>
+            <tbody>
+                @foreach($userApplications as $app)
+                    <tr>
+                        <td>{{ $app->full_name }}</td>
+                        <td>{{ isset($app->school_name) && !empty($app->school_name) ? 'High School' : 'University/College' }}</td>
+                        <td>{{ $app->serial_number ?? 'N/A' }}</td>
+                        <td>{{ ucfirst($app->status) }}</td>
+                        <td>{{ $app->created_at->format('d M Y H:i') }}</td>
+                        <td>
+                            @if(isset($app->school_name) && !empty($app->school_name))
+                                <a href="{{ route('scholarship.cdf.view', $app->id) }}" class="btn btn-sm btn-primary">View</a>
+                            @else
+                                <a href="{{ route('scholarship.view', $app->id) }}" class="btn btn-sm btn-primary">View</a>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
 
-
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
