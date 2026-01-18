@@ -38,6 +38,11 @@ Route::get('/test', function () {
 */
 Auth::routes();
 
+Route::get('/home', function () {
+    return redirect()->route('dashboard');
+})->middleware('auth')->name('home');
+
+
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/dashboard', function () {
