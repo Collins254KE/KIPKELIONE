@@ -38,6 +38,19 @@ Route::get('/test', function () {
 */
 Auth::routes();
 
+use Illuminate\Support\Facades\Auth;
+
+Route::get('/dashboard', function () {
+    $user = Auth::user();
+
+    if ($user && $user->is_admin) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('status');
+})->middleware('auth')->name('dashboard');
+
+
 /*
 |--------------------------------------------------------------------------
 | User Protected Routes

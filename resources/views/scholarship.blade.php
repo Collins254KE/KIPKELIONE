@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Countdown Timer
-    const closingDate = new Date("2025-12-31 23:59:59").getTime();
+    const closingDate = new Date("2026-02-25 23:59:59").getTime();
     const countdownEl = document.getElementById('countdown');
     const submitBtn = document.getElementById('submitBtn');
 
